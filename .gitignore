@@ -1,0 +1,39 @@
+# Xcode build artifacts
+DerivedData/
+build/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+# User-specific Xcode settings
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Package.resolved   # opinion split — see notes below
+.package.resolved
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Other tooling
+*.swp
+*.swo
+*~
+
+# CocoaPods (if you ever use them)
+Pods/
+*.xcworkspace
+
+# Carthage (if you ever use them)
+Carthage/Build/
+
+# IDE files
+.idea/
+.vscode/
