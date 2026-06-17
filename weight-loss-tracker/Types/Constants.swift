@@ -31,3 +31,13 @@ internal struct ViewActivity {
     static let add: String = "add"
     static let update: String = "edit"
 }
+
+internal struct Multiply {
+    static let byOneHalf = 1.5
+    static let byOneQuarter = 1.25
+    static let byOneEighth = 1.125
+    static let byHalf = 0.5
+    static let byQuarter = 0.25
+    static let byEighth = 0.125
+    static let bySixteenth = 0.625
+}

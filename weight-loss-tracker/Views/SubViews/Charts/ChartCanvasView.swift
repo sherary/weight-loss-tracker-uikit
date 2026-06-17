@@ -8,22 +8,27 @@
 import UIKit
 
 internal class ChartCanvasView: UIView {
-    private let width: Int = 300
-    private let height: Int = 240
-    
     private var yAxisPoints: [CGPoint] = []
     private var chartLegends: (weights: [Double], days: [String]) = (weights: [] as [Double], days: [] as [String])
-    private var xAxisCount: Int = 1
-    private var yAxisCount: Int = 1
-    private lazy var yAxisHeight: Int = height / yAxisCount
+    private var axisCount: (x: Int, y: Int) = (x: 1, y: 1)
+    private var axisRange: (x: Int, y: Int) = (x: 0, y: 0)
     
     internal var legendDataSources: (weights: [Double], days: [String]) = (weights: [] as [Double], days: [] as [String]) {
         didSet {
             chartLegends = legendDataSources
-            xAxisCount = chartLegends.days.count
-            yAxisCount = chartLegends.weights.count
-            
+            axisCount.x = chartLegends.days.count
+            axisCount.y = chartLegends.weights.count
+
             setupLayout()
+        }
+    }
+    
+    internal var dimensions: (width: CGFloat, height: CGFloat, xRange: Int, yRange: Int) = (width: 0, height: 0, xRange: 0, yRange: 0) {
+        didSet {
+            frame = CGRect(x: 0, y: 0, width: dimensions.width, height: dimensions.height)
+            
+            axisRange.x = dimensions.xRange
+            axisRange.y = dimensions.yRange
         }
     }
   
@@ -41,13 +46,18 @@ internal class ChartCanvasView: UIView {
                                xIndex: Int, yIndex: Int,
                                xRange: Int = 0
     ) -> CGRect {
-        var rect: CGRect = CGRect(x: x, y: y, width: xRange, height: self.yAxisHeight)
-        if yIndex == yAxisCount && xIndex == xAxisCount {
-            rect = CGRect(x: x, y: y - Int(rect.height), width: xRange / Int(1.8), height: self.yAxisHeight)
-        } else if yIndex == yAxisCount  && xIndex < xAxisCount {
-            rect = CGRect(x: x, y: y, width: xRange, height: self.yAxisHeight / 2)
-        } else if yIndex < yAxisCount && xIndex == xAxisCount {
-            rect = CGRect(x: x, y: y - Int(rect.height), width: xRange / Int(1.8), height: self.yAxisHeight)
+        var rect: CGRect = CGRect(x: x, y: y, width: xRange, height: self.axisRange.y)
+        if yIndex == axisCount.y && xIndex == axisCount.x {
+            rect = CGRect(x: x, y: y - Int(rect.height), width: xRange / Int(1.8), height: self.axisRange.y)
+        } else if yIndex == axisCount.y - 1 && xIndex < axisCount.x {
+            var responsiveLegend = self.axisRange.y / 3
+            if dimensions.yRange > (dimensions.xRange * 2) {
+                responsiveLegend = self.axisRange.y / 4
+            }
+            
+            rect = CGRect(x: x, y: y, width: xRange, height: responsiveLegend)
+        } else if yIndex < axisCount.y && xIndex == axisCount.x {
+            rect = CGRect(x: x, y: y - Int(rect.height), width: xRange / Int(1.8), height: self.axisRange.y)
         }
         
         return rect
@@ -85,23 +95,22 @@ internal class ChartCanvasView: UIView {
     private func setupLayout() {
         guard chartLegends.days.count > 0  || chartLegends.weights.count > 0 else { return }
         
-        let xRange: Int = Int(self.width / xAxisCount) // equal width by days
-        let xAxisOffsetLimit = (min: 0, max: xAxisCount) // 0...6 = offset date data, 7 = date legend
-        let yAxisOffsetLimit = (min: 0, max: yAxisCount - 1) // 0...yAxisCount - 2 = offset weight data, yAxisCount - 1 = weight legend
+        let xAxisOffsetLimit = (min: 0, max: axisCount.x) // 0...6 = offset date data, 7 = weight legend
+        let yAxisOffsetLimit = (min: 0, max: axisCount.y - 1) // 0...axisCount y - 2 = offset weight data, yAxisCount - 1 = date legend
         
         var x: Int = 0
         var y: Int = 0
-        
+
         for i in yAxisOffsetLimit.min...yAxisOffsetLimit.max {
             for j in xAxisOffsetLimit.min...xAxisOffsetLimit.max {
-                let rect: CGRect = self.makeRectangle(x: x, y: y, xIndex: j, yIndex: i, xRange: xRange)
+                let rect: CGRect = self.makeRectangle(x: x, y: y, xIndex: j, yIndex: i, xRange: axisRange.x)
                 let rectView = UIView(frame: rect)
                 
                 if i == yAxisOffsetLimit.max && j < xAxisOffsetLimit.max {
                     makeLegendX(container: rectView, text: chartLegends.days[j])
                 }
                 
-                x += xRange
+                x += axisRange.x
                 
                 if j != xAxisOffsetLimit.max {
                     if i == yAxisOffsetLimit.min {
@@ -117,7 +126,7 @@ internal class ChartCanvasView: UIView {
                 if j == xAxisOffsetLimit.min && j != xAxisOffsetLimit.max {
                     rectView.addDashBorder(edges: [.left], color: .lightGray)
                     rectView.addDashBorder(edges: [.right], color: .lightGray)
-                } else  if j > xAxisOffsetLimit.min && j < xAxisOffsetLimit.max - 1 {
+                } else if j > xAxisOffsetLimit.min && j < xAxisOffsetLimit.max - 1 {
                     rectView.addDashBorder(edges: [.right], color: .lightGray)
                 } else if j == xAxisOffsetLimit.max - 1 {
                     rectView.addDashBorder(edges: [.right], color: .lightGray)

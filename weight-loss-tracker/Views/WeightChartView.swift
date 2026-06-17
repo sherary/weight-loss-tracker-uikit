@@ -11,22 +11,20 @@ final class WeightChartView: UIView {
     private let padding: CGFloat = 20
     private let titleView: ChartTitleView = ChartTitleView()
     private let legendsView: ChartLegendsView = ChartLegendsView()
-    private let chartCanvasView: ChartCanvasView = ChartCanvasView()
-    private let summaryView: ChartSummaryView = ChartSummaryView()
+    private lazy var chartCanvasView: ChartCanvasView = ChartCanvasView()
+    private lazy var summaryView: ChartSummaryView = ChartSummaryView()
     private lazy var stackView: UIStackView = UIStackView(arrangedSubviews: [titleView, legendsView])
     
+    private let commonDenominator: Double = 0.5
     private var axisXCount: Int = 7 // based on days count (should be mutable in the future)
     private var axisYCount: Int = 1
     private var chartLegends: (weights: [Double], days: [String]) = (weights: [] as [Double], days: [] as [String])
+    private var dimensions: (width: CGFloat, height: CGFloat, xRange: Int, yRange: Int) = (width: 0, height: 0, xRange: 0, yRange: 0)
     private var points: [CGPoint] = []
     
     internal var collection: [Weights] = [] {
         didSet {
-            if !collection.isEmpty {
-                axisYCount = collection.count
-
-                setNeedsDisplay()
-            }
+            setNeedsDisplay()
         }
     }
     
@@ -46,8 +44,9 @@ final class WeightChartView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = .systemBackground
-        
+            
         calculateLegends()
+        setDrawableDimensions()
         setSubviewComponents()
         setupSubViews()
     }
@@ -69,7 +68,10 @@ final class WeightChartView: UIView {
             Legends(text: "Steps", size: 10, color: UIColor.systemBlue, shape: "square")
         ]
         
+        chartCanvasView.dimensions = dimensions
         chartCanvasView.legendDataSources = chartLegends
+        
+        summaryView.weights = WeightStore.shared.collection.sorted(by: { $0.date < $1.date }).map(\.weight)
     }
     
     private func setDataPoints() {
@@ -97,7 +99,7 @@ final class WeightChartView: UIView {
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .fill
-        stackView.spacing = 4
+        stackView.spacing = 2
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         self.addSubview(stackView)
@@ -105,14 +107,25 @@ final class WeightChartView: UIView {
         chartCanvasView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(chartCanvasView)
         
+        summaryView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(summaryView)
+        
+        let actualHeight = dimensions.height - (CGFloat(dimensions.yRange) * Multiply.byHalf)
+        
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
             
-            chartCanvasView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: padding * 1.25),
+            chartCanvasView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: padding * Multiply.byOneQuarter),
             chartCanvasView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             chartCanvasView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            chartCanvasView.heightAnchor.constraint(equalToConstant: actualHeight),
+            
+            summaryView.topAnchor.constraint(equalTo: chartCanvasView.bottomAnchor, constant: padding * Multiply.byHalf),
+            summaryView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            summaryView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            summaryView.heightAnchor.constraint(equalTo: layoutMarginsGuide.heightAnchor, constant: padding * -1)
         ])
     }
     
@@ -133,27 +146,43 @@ final class WeightChartView: UIView {
             }
         }
         
-        minWeight = minWeight.roundedToNearest(0.5, rule: .down)
-        maxWeight = maxWeight.roundedToNearest(0.5, rule: .up)
+        if minWeight == 0 {
+            minWeight = maxWeight.roundedToNearest(commonDenominator, rule: .down)
+            maxWeight = minWeight + 1
+        } else {
+            minWeight = minWeight.roundedToNearest(commonDenominator, rule: .down)
+            maxWeight = maxWeight.roundedToNearest(commonDenominator, rule: .up)
+        }
         
-        for point in stride(from: maxWeight, to: minWeight, by: -0.5) { // formerly decremented by yRange
+        let decrementDenominator = commonDenominator * -1
+        for point in stride(from: maxWeight, to: minWeight, by: decrementDenominator) {
             chartLegends.weights.append(point)
         }
 
-        chartLegends.weights.append(minWeight) // for legend's 0 point
-        print("legends =", chartLegends.weights)
+        chartLegends.weights.append(minWeight) // for y range's 0 point
+        
         if let startDate = sortedCollection.first {
             chartLegends.days.append(contentsOf: Helpers.getDaysOfWholeWeek(startDate: startDate.date))
         }
+        
+        axisYCount = chartLegends.weights.count
+    }
+    
+    private func setDrawableDimensions() {
+        dimensions.xRange = 42
+        dimensions.width = CGFloat(dimensions.xRange * axisXCount)
+        dimensions.yRange = Int(Double(dimensions.xRange) * Multiply.byOneHalf)
+        dimensions.height = CGFloat(dimensions.yRange * axisYCount)
     }
     
     private func getAxisLocation(_ legends: [Double], _ value: Double) -> (index: Int, remainder: Double) {
         var smallestRemainder: (index: Int, remainder: Double) = (index: 0, remainder: 0)
+
         for (index, num) in legends.enumerated() {
             if num > value { continue }
             
             if num - value <= 0 && value > smallestRemainder.remainder {
-                smallestRemainder = (index: legends.count - (index + 1), remainder: abs(num - value))
+                smallestRemainder = (index: legends.count - (index + 1), remainder: num - value)
                 // index = decrement version of legends index
                 // it is 4, 3, 2, 1, 0 of 0, 1, 2, 3, 4
                 
@@ -164,56 +193,74 @@ final class WeightChartView: UIView {
         return smallestRemainder
     }
     
-    private func drawLines() {
-        let path = UIBezierPath();
-        let bgWidth: CGFloat = chartCanvasView.bounds.width - 25 // - 25 untuk tempat y axis legends
-        let bgHeight: CGFloat = CGFloat((chartLegends.weights.count - 1) * 50)
-        let axisHeight: Int = Int(bgHeight) / axisYCount
-        let xRange: CGFloat = CGFloat(Int(bgWidth) / axisXCount) // width / days
-        let drawableY: CGFloat = self.bounds.origin.y + self.layoutMargins.top + stackView.bounds.height + (self.layoutMargins.top * 1.25)
-        let drawableX: CGFloat = self.bounds.origin.x + self.layoutMargins.left
-        
-        var point: CGPoint = CGPoint(x: drawableX, y: drawableY) // starting point
-
-        points.append(point)
-        path.move(to: point)
-     
-        let sortedCollection = WeightStore.shared.collection.sorted(by: { $0.date < $1.date }).map(\.weight); print("collection = ", sortedCollection)
-        let yLeadingPoint = point.y // 111.0
-        let yTrailingPoint = point.y + CGFloat(bgHeight) // 311.0
-        let yPointRangeByAxis = (yTrailingPoint - yLeadingPoint) / Double(axisYCount - 1) // - 1 soalnya sebenernya bottom rangenya di axis #x - 1
-        
-        /***
-            Legend -> axis convertion calculation
+    /***
+        Important!
+            Top (upper left)
+                x: chartCanvasView.frame.origin.x
+                y: chartCanvasView.frame.origin.y
+            Down (down right)
+                let drawableX = CGFloat(dimensions.xRange * axisXCount)
+                let drawableY = CGFloat(dimensions.yRange * (axisYCount - 1))
+                
+                x: chartCanvas.frame.origin.x + drawableX
+                y: chartCanvas.frame.origin.y + drawableY
             
+            Counting axis index start from the bottom
+        Why?
+     
+        Because:
+            Legend -> axis convertion calculation
+             
             Example
                 x = 50
-                4 48   = 311 - (x * 0)
-                3 48.5 = 311 - x
-                2 49   = 311 - x - x
-                1 49.5 = 311 - x - x - x
-                0 50   = 311 - x - x - x - x
-             
-                [50, 49.5, 49.0, 48.5, 48]
-                [4, 3, 2, 1, 0]
-         */
-        for (index, data) in sortedCollection.enumerated() {
+          
+                3 57.5   = 311 - (x * 0)
+                2 57.0   = 311 - x or 311 - (x * 1)
+                1 56.5   = 311 - x - x or 311 - (x * 2)
+                0 56.0   = 311 - x - x - x or 311 - (x * 3)
+                 
+            In short -> bounds.width - (x * n)
+                n = legends[i]
+          
+                [57.5, 57.0, 56.5, 56.0]
+                [3,    2,    1,    0]
+        Note:
+            Starting point  =    (16.0, 104.3)
+            Ending point    =    (310.0, 293.3)
+     */
+    
+    private func drawLines() {
+        let path = UIBezierPath()
+        let drawableY: CGFloat = CGFloat(dimensions.yRange * (axisYCount - 1))
+        
+        var point: CGPoint = CGPoint(x: chartCanvasView.frame.origin.x, y: chartCanvasView.frame.origin.y)
+        let sortedWeight = WeightStore.shared.collection.sorted(by: { $0.date < $1.date }).map(\.weight)
+        
+        for (index, item) in sortedWeight.enumerated() {
             if index == 0 {
-                point.x += (xRange / 2)
+                path.move(to: point)
+                points.append(point)
+                
+                point.x += CGFloat(dimensions.xRange / 2)
             } else {
-                point.x += xRange
+                point.x += CGFloat(dimensions.xRange)
             }
             
-            let axisLocation = getAxisLocation(chartLegends.weights, data)
-            point.y = yTrailingPoint - CGFloat(axisHeight * axisLocation.index) - (yPointRangeByAxis / CGFloat(axisHeight) * axisLocation.remainder * 100)
+            let axis = getAxisLocation(chartLegends.weights, item)
+            let bottomY = chartCanvasView.frame.origin.y + drawableY
+            let axisLocation = CGFloat(axis.index * dimensions.yRange)
+            let roundedRange = round(axis.remainder * 10) / 10
+            let dimensionByFraction = CGFloat(dimensions.yRange) / commonDenominator
+            
+            point.y = bottomY - axisLocation + (dimensionByFraction * roundedRange)
+            
             path.addLine(to: point)
-            
-            points.append(point)
             path.move(to: point)
+            points.append(point)
             
-            if index == sortedCollection.count - 1 {
-                point.x += (xRange / 2)
-                
+            if index == sortedWeight.count - 1 && sortedWeight.count == axisXCount {
+                point.x += CGFloat(dimensions.xRange / 2)
+            
                 path.addLine(to: point)
             }
         }

@@ -34,7 +34,7 @@ final class ChartSummaryView: UIView {
         
         let total = data.reduce(0, +)
         let avg = total / Double(data.count)
-        
+        print("Data = \(data)")
         totalLbl.text = "Total: \(round(total * 100) / 100)"
         averageLbl.text = "Average: \(round(avg * 100) / 100)"
     }

@@ -75,7 +75,7 @@ extension Double {
         case .up:
             distance = floorValue - self
             
-            return self + (distance - threshold)
+            return self + abs(distance - threshold)
         default:
             return floorValue
         }
