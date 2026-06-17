@@ -9,8 +9,16 @@ import UIKit
 
 final class WeightInputViewController: UIViewController {
     private var weightInputView: WeightInputView { view as! WeightInputView }
-    internal var weight: Weights?
     private var state: String = ViewActivity.add
+    
+    internal var availableData: Weights? {
+        didSet {
+            guard let data = availableData else { return }
+            
+            weightInputView.data = data
+            state = ViewActivity.update
+        }
+    }
     
     override func loadView() {
         view = WeightInputView()
@@ -32,18 +40,12 @@ final class WeightInputViewController: UIViewController {
         
         weightInputView.weightTxtField.addAction(UIAction { [weak self] action in
             guard let self, let field = action.sender as? UITextField else { return }
-            let parsed = self.removeExcessiveCommas(text: field.text!)
+            let parsed = Helpers.removeExcessiveCommas(text: field.text!)
             
             field.text = parsed
             
             weightInputView.saveBtn.isEnabled = !parsed.isEmpty
         }, for: .editingChanged)
-        
-        if let availableData = weight {
-            weightInputView.weightTxtField.text = "\(availableData.weight)"
-            weightInputView.datePicker.date = availableData.date
-            state = ViewActivity.update
-        }
     }
     
     @objc private func closeSheet() {
@@ -70,7 +72,7 @@ final class WeightInputViewController: UIViewController {
         }
         
         var weight: Weights = Weights(date: weightInputView.datePicker.date, weight: weightValue, stepCount: 0, calorieBurned: 0)
-        if let data = self.weight, state == ViewActivity.update {
+        if let data = availableData, state == ViewActivity.update {
             weight.id = data.id
             weight.stepCount = data.stepCount
             weight.calorieBurned = data.calorieBurned
@@ -85,20 +87,5 @@ final class WeightInputViewController: UIViewController {
         self.present(alert, animated: true)
     }
     
-    private func removeExcessiveCommas(text: String) -> String {
-        let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        var result = ""
-        
-        for char in normalized {
-            if char == "," {
-                guard !result.contains(",") else { continue }
-                
-                result.append(",")
-            } else {
-                result.append(char)
-            }
-        }
-        
-        return result
-    }
+    
 }

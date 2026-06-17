@@ -46,4 +46,21 @@ final class Helpers {
     internal static func getWeekOfMonthIndex(date: Date) -> Int {
         return Calendar.current.component(.weekOfMonth, from: date)
     }
+    
+    internal static func removeExcessiveCommas(text: String) -> String {
+        let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var result = ""
+        
+        for char in normalized {
+            if char == "," {
+                guard !result.contains(",") else { continue }
+                
+                result.append(",")
+            } else {
+                result.append(char)
+            }
+        }
+        
+        return result
+    }
 }

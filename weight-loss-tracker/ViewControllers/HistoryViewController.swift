@@ -41,8 +41,12 @@ final class HistoryViewController: UIViewController {
         historyView.weightHistoryTable.reloadData()
     }
     
-    private func presentSheet() {
+    private func presentSheet(weight: Weights? = nil) {
         let weightInputVC = WeightInputViewController()
+        if let selectedData = weight {
+            weightInputVC.availableData = weight
+        }
+        
         let nav = UINavigationController(rootViewController: weightInputVC)
         if let sheet = nav.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
@@ -129,9 +133,8 @@ extension HistoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let weightInputVC = WeightInputViewController()
         let selectedItem = WeightStore.shared.collection[indexPath.row]
-        weightInputVC.weight = selectedItem
-        presentSheet()
+        
+        presentSheet(weight: selectedItem)
     }
 }

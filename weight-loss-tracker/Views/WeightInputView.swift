@@ -8,13 +8,25 @@
 import UIKit
 
 final class WeightInputView: UIView {
-    internal let weightLbl: UILabel = UILabel()
+    private let weightLbl: UILabel = UILabel()
+    private let dateLbl: UILabel = UILabel()
+    private let doneButton: UIBarButtonItem = UIBarButtonItem()
+    
     internal let weightTxtField: UITextField = UITextField()
-    internal let dateLbl: UILabel = UILabel()
     internal let datePicker: UIDatePicker = UIDatePicker()
     internal let saveBtn: UIButton = UIButton()
     internal let tapper: UITapGestureRecognizer = UITapGestureRecognizer()
-    internal let doneButton: UIBarButtonItem = UIBarButtonItem()
+    
+    internal var data: Weights? {
+        didSet {
+            if let availableData = data {
+                let weightInStr = String(availableData.weight).replacingOccurrences(of: ".", with: ",")
+                
+                weightTxtField.text = "\(weightInStr)"
+                datePicker.date = availableData.date
+            }
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
