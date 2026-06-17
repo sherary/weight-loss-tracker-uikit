@@ -127,7 +127,7 @@ extension HistoryViewController: UITableViewDataSource {
 extension HistoryViewController: UITableViewDelegate {
     // The user tapped a row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)   // remove the grey highlight
+        tableView.deselectRow(at: indexPath, animated: true)
         
         let weightInputVC = WeightInputViewController()
         let selectedItem = WeightStore.shared.collection[indexPath.row]

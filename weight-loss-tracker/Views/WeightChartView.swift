@@ -21,6 +21,7 @@ final class WeightChartView: UIView {
     private var chartLegends: (weights: [Double], days: [String]) = (weights: [] as [Double], days: [] as [String])
     private var dimensions: (width: CGFloat, height: CGFloat, xRange: Int, yRange: Int) = (width: 0, height: 0, xRange: 0, yRange: 0)
     private var points: [CGPoint] = []
+    private var dotViews: [UIView] = []
     
     internal var collection: [Weights] = [] {
         didSet {
@@ -44,6 +45,7 @@ final class WeightChartView: UIView {
         super.init(frame: frame)
         
         self.backgroundColor = .systemBackground
+        guard WeightStore.shared.collection.count > 0 else { return }
             
         calculateLegends()
         setDrawableDimensions()
@@ -56,7 +58,8 @@ final class WeightChartView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        guard collection.count > 0, chartLegends.weights.count > 0 else { return }
+        guard WeightStore.shared.collection.count > 0, chartLegends.weights.count > 0 else { return }
+        points.removeAll()
         
         drawLines()
         setDataPoints()
@@ -71,10 +74,16 @@ final class WeightChartView: UIView {
         chartCanvasView.dimensions = dimensions
         chartCanvasView.legendDataSources = chartLegends
         
-        summaryView.weights = WeightStore.shared.collection.sorted(by: { $0.date < $1.date }).map(\.weight)
+        let collection = WeightStore.shared.collection
+        
+        if collection.count < axisXCount { return }
+        summaryView.weights = collection.sorted(by: { $0.date < $1.date }).map(\.weight)
     }
     
     private func setDataPoints() {
+        dotViews.forEach { $0.removeFromSuperview() }
+        dotViews.removeAll()
+        
         let dotSize: CGFloat = 8
         for (index, point) in points.enumerated() {
             if index == 0 { continue }
@@ -92,6 +101,7 @@ final class WeightChartView: UIView {
             )
             
             self.addSubview(dot)
+            dotViews.append(dot)
         }
     }
     
@@ -230,6 +240,8 @@ final class WeightChartView: UIView {
      */
     
     private func drawLines() {
+        guard collection.count > 0 else { return }
+        
         let path = UIBezierPath()
         let drawableY: CGFloat = CGFloat(dimensions.yRange * (axisYCount - 1))
         
