@@ -9,22 +9,28 @@ import CoreFoundation
 import UIKit
 
 internal enum Sex: String, Codable {
-    case MALE = "M"
-    case FEMALE = "F"
+    case male = "M"
+    case female = "F"
 }
 
 internal enum ActivityLevels: Double, Codable {
-    case SEDENTARY = 1.2
-    case LIGHT = 1.375
-    case MODERATE = 1.55
-    case VERY_ACTIVE = 1.725
-    case SUPER_ACTIVE = 1.9
+    case sedentary = 1.2
+    case light = 1.375
+    case moderate = 1.55
+    case veryActive = 1.725
+    case superActive = 1.9
+}
+
+internal enum CalendarType: Int, Codable {
+    case weekly
+    case monthly
+    case yearly
 }
 
 internal struct BorderStyles {
-    static let CLASSIC: [NSNumber] = [4, 2]
-    static let DOTTED: [NSNumber] = [1, 3]
-    static let DOTTED_DASH: [NSNumber] = [8, 4, 2, 4]
+    static let classic: [NSNumber] = [4, 2]
+    static let dotted: [NSNumber] = [1, 3]
+    static let dottedDash: [NSNumber] = [8, 4, 2, 4]
 }
 
 internal struct ViewActivity {

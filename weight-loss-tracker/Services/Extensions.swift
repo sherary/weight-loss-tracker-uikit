@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIView {
-    internal func addDashBorder(edges: [UIRectEdge], color: UIColor = .separator, thickness: CGFloat = 1, pattern: [NSNumber] = BorderStyles.CLASSIC) {
+    internal func addDashBorder(edges: [UIRectEdge], color: UIColor = .separator, thickness: CGFloat = 1, pattern: [NSNumber] = BorderStyles.classic) {
         let shape: CAShapeLayer = CAShapeLayer()
         shape.strokeColor = color.cgColor
         shape.lineWidth = thickness
