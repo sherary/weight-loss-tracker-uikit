@@ -8,13 +8,13 @@
 import UIKit
 
 internal class ChartTitleView: UIView {
-    internal var title: String = "" {
+    internal var title: String = "Chart Title" {
         didSet {
             lblTitle.text = self.title
         }
     }
     
-    internal var subTitle: String = "" {
+    internal var subTitle: String = "Chart Subtitle" {
         didSet {
             lblSubTitle.text = self.subTitle
         }
