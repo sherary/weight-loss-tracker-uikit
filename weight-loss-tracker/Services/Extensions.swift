@@ -83,3 +83,31 @@ extension Double {
         return floorValue
     }
 }
+
+extension Date {
+    static let localFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "WIT")
+        formatter.locale = Locale(identifier: "id_ID")
+        
+        return formatter
+    }()
+}
+
+extension Calendar {
+    static let local: Calendar = {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        
+        return calendar
+    }()
+}
+
+extension DateComponents {
+    static let local: DateComponents = {
+        var component = DateComponents()
+        component.timeZone = TimeZone.current
+        
+        return component
+    }()
+}

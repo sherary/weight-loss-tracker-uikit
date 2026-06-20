@@ -19,7 +19,7 @@ final class HistoryViewController: UIViewController {
             }
         }
     }
-    private var components = DateComponents()
+    private var components = DateComponents.local
     private var entries: [Weights] = [] {
         didSet {
             historyView.weightHistoryTable.reloadData()
@@ -108,7 +108,7 @@ final class HistoryViewController: UIViewController {
             break
         }
         
-        guard let dateRange = Helpers.getDateRange(from: dateComponent, type: dateRanges.type) else { return }
+        guard let dateRange = Helpers.getDateRanges(from: dateComponent, type: dateRanges.type) else { return }
         self.dateRanges.startDate = dateRange.startDate
         self.dateRanges.endDate = dateRange.endDate
     }
@@ -116,6 +116,7 @@ final class HistoryViewController: UIViewController {
     private func handleSegment(at index: Int, date dateComponents: inout DateComponents, action: Int = 0) {
         guard var week = dateComponents.weekOfMonth,
               var month = dateComponents.month,
+              var day = dateComponents.day,
               var year = dateComponents.year else { return }
         
         guard let date = Calendar.current.date(from: dateComponents) else { return }
@@ -128,11 +129,13 @@ final class HistoryViewController: UIViewController {
             if week > max {
                 month += action
                 week = 1
+                day = 1
             }
             
             if week < 1 {
                 month += action
                 week = Helpers.getTotalWeeksInMonth(from: date)
+                day = 1
             }
             
             let monthName = Helpers.getMonthString(index: month)
@@ -143,11 +146,13 @@ final class HistoryViewController: UIViewController {
             if month < 1 {
                 year -= 1
                 month = 12
+                day = 1
             }
             
             if month > 12 {
                 year += 1
                 month = 1
+                day = 1
             }
             
             let monthName = Helpers.getMonthString(index: month)
@@ -164,6 +169,7 @@ final class HistoryViewController: UIViewController {
         dateComponents.weekOfMonth = week
         dateComponents.month = month
         dateComponents.year = year
+        dateComponents.day = day
     }
     
     private func reDelegateDataSource(from data: [Weights], matching ranges: DateRanges) -> [Weights]? {
@@ -198,10 +204,9 @@ final class HistoryViewController: UIViewController {
     }
     
     private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
+        let formatter = Date.localFormatter
         formatter.dateStyle = .medium
-        formatter.locale = Locale(identifier: "id_ID")
-
+        
         return "\(date.formatted(.dateTime.weekday(.wide))) \(formatter.string(from: date))"
     }
 }
