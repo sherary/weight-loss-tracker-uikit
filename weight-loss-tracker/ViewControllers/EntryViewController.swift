@@ -8,10 +8,10 @@
 import UIKit
 
 final class EntryViewController: UIViewController {
-    private var entryView: EntryView { view as! EntryView }
+    private var entryView = EntryView()
     
     override func loadView() {
-        view = EntryView()
+        self.view = entryView
     }
     
     override func viewDidLoad() {
