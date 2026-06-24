@@ -29,7 +29,7 @@ class CollectionTypeUserDefaultMethods {
     }
     
     internal static func editObjectById(key: String, data: Weights) {
-        var collection: [Weights] = self.loadUserDefaultCustomObject(key: Configs.USER_DEFAULTS_KEY)
+        var collection: [Weights] = self.loadUserDefaultCustomObject(key: Configs.WEIGHT_DATA_KEY)
         
         guard let index = collection.firstIndex(where: { $0.id == data.id }) else {
             return
@@ -45,7 +45,7 @@ class CollectionTypeUserDefaultMethods {
     }
     
     internal static func deleteObjectById(key: String, id: Int32) {
-        var collection: [Weights] = self.loadUserDefaultCustomObject(key: Configs.USER_DEFAULTS_KEY)
+        var collection: [Weights] = self.loadUserDefaultCustomObject(key: Configs.WEIGHT_DATA_KEY)
         
         guard let index = collection.firstIndex(where: { $0.id == id }) else {
             return
