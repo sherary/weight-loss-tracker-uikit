@@ -8,9 +8,13 @@
 import CoreFoundation
 import UIKit
 
-internal enum Sex: String, Codable {
+internal enum Sex: String, CustomStringConvertible {
     case male = "M"
     case female = "F"
+    
+    var description: String {
+        return self.rawValue
+    }
 }
 
 internal enum ActivityLevels: Double, Codable {
@@ -19,6 +23,25 @@ internal enum ActivityLevels: Double, Codable {
     case moderate = 1.55
     case veryActive = 1.725
     case superActive = 1.9
+}
+
+internal enum MeasurementUnits: String, CaseIterable {
+    case imperial
+    case metric
+    
+    var index: Int {
+        return MeasurementUnits.allCases.firstIndex(of: self) ?? 0
+    }
+}
+
+internal enum Destination: Codable {
+    case goalWeight
+    case activityLevel
+    case measurement
+    case dayRange
+    case monthlyRange
+    case appleWatchConnect
+    case miBandConnect
 }
 
 internal enum CalendarType: Int, Codable {
