@@ -8,7 +8,7 @@
 import UIKit
 
 final class WeightInputViewController: UIViewController {
-    private var weightInputView: WeightInputView { view as! WeightInputView }
+    private var weightInputView = WeightInputView()
     private var state: String = ViewActivity.add
     
     internal var availableData: Weights? {
@@ -21,7 +21,7 @@ final class WeightInputViewController: UIViewController {
     }
     
     override func loadView() {
-        view = WeightInputView()
+        self.view = weightInputView
     }
     
     override func viewDidLoad() {
