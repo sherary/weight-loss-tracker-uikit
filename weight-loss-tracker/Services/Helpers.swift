@@ -44,7 +44,8 @@ final class Helpers {
     internal static func getWholeWeeksByDates(dates: [Date]) -> [String] {
         var result: [String] = []
         for date in dates {
-            result.append(self.getDayOfDate(date: date)!)
+            guard let day = self.getDayOfDate(date: date) else { continue }
+            result.append(day)
         }
         
         return result

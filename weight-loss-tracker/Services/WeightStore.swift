@@ -10,7 +10,7 @@ import UIKit
 final class WeightStore {
     static let shared = WeightStore()
     private(set) var collection: [Weights] = []
-    private let key = Configs.USER_DEFAULTS_KEY
+    private let key = Configs.WEIGHT_DATA_KEY
     
     private init() {
         load()
