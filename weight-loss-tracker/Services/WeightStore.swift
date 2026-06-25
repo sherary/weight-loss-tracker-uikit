@@ -6,7 +6,7 @@
 //
 
 import UIKit
-// if shits happen, delete self 
+
 final class WeightStore {
     static let shared = WeightStore()
     private(set) var collection: [Weights] = []
@@ -21,7 +21,7 @@ final class WeightStore {
         self.collection.sort { $0.date < $1.date }
     }
     
-    func add(_ data: Weights) {
+    internal func add(_ data: Weights) {
         var newEntry = data
         newEntry.id = nextID()
         
@@ -30,7 +30,7 @@ final class WeightStore {
         self.notifyChange()
     }
     
-    func update(_ data: Weights) {
+    internal func update(_ data: Weights) {
         guard let index = collection.firstIndex(where: { $0.id == data.id }) else { return }
         self.collection[index] = data
         
@@ -38,14 +38,14 @@ final class WeightStore {
         self.notifyChange()
     }
     
-    func delete(id: Int32) {
+    internal func delete(id: Int32) {
         self.collection.removeAll { $0.id == id }
         
         self.sortAndPersist()
         self.notifyChange()
     }
     
-    func upsertByDate(weight: Double, date: Date) {
+    internal func upsertByDate(weight: Double, date: Date) {
         if let existing = collection.first(where: {
             Calendar.current.isDate($0.date, inSameDayAs: date)
         }) {

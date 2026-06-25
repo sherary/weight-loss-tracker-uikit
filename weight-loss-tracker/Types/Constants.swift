@@ -17,12 +17,27 @@ internal enum Sex: String, CustomStringConvertible {
     }
 }
 
-internal enum ActivityLevels: Double, Codable {
+internal enum ActivityLevels: Double, Codable, CaseIterable {
     case sedentary = 1.2
-    case light = 1.375
-    case moderate = 1.55
+    case lightActivity = 1.375
+    case moderateActivity = 1.55
     case veryActive = 1.725
-    case superActive = 1.9
+    case athletic = 1.9
+    
+    var name: String {
+        switch self {
+        case .sedentary: 
+            return "Sedentary"
+        case .lightActivity: 
+            return "Light Activity"
+        case .moderateActivity:
+            return "Moderate Activity"
+        case .veryActive:
+            return "Very Active"
+        case .athletic:
+            return "Athletic"
+        }
+    }
 }
 
 internal enum MeasurementUnits: String, CaseIterable {
