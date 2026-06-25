@@ -24,21 +24,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         // add default settings on every install
         let defaultSettings: [SettingSection] = [
-            SettingSection(title: "Goals", items: [
-                SettingItems(id: 1, name: "Goal Weight", value: 50, destination: .goalWeight),
-                SettingItems(id: 2, name: "Activity Level", value: 2, destination: .activityLevel)
-            ]),
-            SettingSection(title: "Utilities", items: [
-                SettingItems(id: 3, name: "Unit of Measurement", value: 1, destination: .measurement)
-            ]),
-            SettingSection(title: "Dates", items: [
-                SettingItems(id: 4, name: "Weekly Range", value: 0, destination: .dayRange),
-                SettingItems(id: 5, name: "Monthly Range", value: 1, destination: .monthlyRange)
-            ], description: "Set the start of your preferred dates"),
-            SettingSection(title: "Connected Devices", items: [
-                SettingItems(id: 6, name: "Apple Watch", value: 0, destination: .appleWatchConnect),
-                SettingItems(id: 7, name: "Mi Band", value: 0, destination: .miBandConnect)
-            ], description: "Connect your favorite device to measure your metrics accurately")
+            SettingSection(
+                sectionId: 1,
+                title: "Goals",
+                items: [
+                    SettingItems(id: 1, name: "Goal Weight", value: 50, destination: .goalWeight),
+                    SettingItems(id: 2, name: "Activity Level", value: 2, destination: .activityLevel)
+                ]
+            ),
+            SettingSection(
+                sectionId: 2,
+                title: "Utilities",
+                items: [
+                    SettingItems(id: 3, name: "Unit of Measurement", value: 1, destination: .measurement)
+                ]
+            ),
+            SettingSection(
+                sectionId: 3,
+                title: "Dates",
+                items: [
+                    SettingItems(id: 4, name: "Weekly Range", value: 0, destination: .dayRange),
+                    SettingItems(id: 5, name: "Monthly Range", value: 1, destination: .monthlyRange)
+                ],
+                description: "Set the start of your preferred dates"
+            ),
+            SettingSection(
+                sectionId: 4,
+                title: "Connected Devices",
+                items: [
+                    SettingItems(id: 6, name: "Apple Watch", value: 0, destination: .appleWatchConnect),
+                    SettingItems(id: 7, name: "Mi Band", value: 0, destination: .miBandConnect)
+                ],
+                description: "Connect your favorite device to measure your metrics accurately"
+            )
         ]
         
         guard let data = try? JSONEncoder().encode(defaultSettings) else { return }
