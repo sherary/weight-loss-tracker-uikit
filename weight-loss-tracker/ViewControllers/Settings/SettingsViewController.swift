@@ -31,15 +31,8 @@ final class SettingsViewController: UIViewController {
         refreshUnitSetting()
     }
     
-    private func getAvailableSettings() -> [SettingSection] {
-        guard let data = UserDefaults.standard.data(forKey: Configs.SETTINGS_KEY) else { return [] }
-        guard let decodedData = try? JSONDecoder().decode([SettingSection].self, from: data) else { return [] }
-        
-        return decodedData
-    }
-    
     private func refreshUnitSetting() {
-        settingSections = self.getAvailableSettings()
+        settingSections = SettingsService.getAvailableSettings()
         
         settingsView.tableView.reloadData()
     }
@@ -51,7 +44,7 @@ extension SettingsViewController {
         case 1:
             return "\(value) kg"
         case 2:
-            return self.activityLevelParser(value)
+            return SettingsService.activityLevelParser(value)
         case 3:
             return self.measurementUnitParser(value)
         case 4:
@@ -63,11 +56,6 @@ extension SettingsViewController {
         default:
             return "\(value)"
         }
-    }
-    
-    private func activityLevelParser(_ level: Int) -> String {
-        let activityLevel = ["Sedentary", "Light Activity", "Moderate Activity", "Intense Activity", "Athlete"]
-        return activityLevel[level]
     }
     
     private func measurementUnitParser(_ unit: Int) -> String {
@@ -158,7 +146,10 @@ extension SettingsViewController: UITableViewDelegate {
             
             vc = weightVC
         case .activityLevel:
-            return
+            let activityLevelVC = ActivityLevelSettingsViewController()
+            activityLevelVC.id = (sectionId: sectionId, settingId: settingId)
+            
+            vc = activityLevelVC
         case .measurement:
             return
         case .dayRange:
