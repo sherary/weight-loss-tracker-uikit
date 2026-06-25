@@ -59,25 +59,6 @@ internal enum Destination: Codable {
     case miBandConnect
 }
 
-internal enum MeasurementUnits: String, CaseIterable {
-    case imperial
-    case metric
-    
-    var index: Int {
-        return MeasurementUnits.allCases.firstIndex(of: self) ?? 0
-    }
-}
-
-internal enum Destination: Codable {
-    case goalWeight
-    case activityLevel
-    case measurement
-    case dayRange
-    case monthlyRange
-    case appleWatchConnect
-    case miBandConnect
-}
-
 internal enum CalendarType: Int, Codable {
     case weekly
     case monthly
