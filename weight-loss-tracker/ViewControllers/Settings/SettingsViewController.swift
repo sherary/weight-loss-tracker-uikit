@@ -23,8 +23,12 @@ final class SettingsViewController: UIViewController {
         settingsView.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "settings")
         settingsView.tableView.dataSource = self
         settingsView.tableView.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        settingSections = self.getAvailableSettings()
+        refreshUnitSetting()
     }
     
     private func getAvailableSettings() -> [SettingSection] {
@@ -32,6 +36,12 @@ final class SettingsViewController: UIViewController {
         guard let decodedData = try? JSONDecoder().decode([SettingSection].self, from: data) else { return [] }
         
         return decodedData
+    }
+    
+    private func refreshUnitSetting() {
+        settingSections = self.getAvailableSettings()
+        
+        settingsView.tableView.reloadData()
     }
 }
 
@@ -138,10 +148,15 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 extension SettingsViewController: UITableViewDelegate {
-    private func toTheNextNavigation(at destination: Destination) {
+    private func toTheNextNavigation(at destination: Destination, with sectionId: Int, and settingId: Int) {
+        let vc: UIViewController
+        
         switch destination {
         case .goalWeight:
-            return
+            let weightVC = WeightGoalSettingsViewController()
+            weightVC.id = (sectionId: sectionId, settingId: settingId)
+            
+            vc = weightVC
         case .activityLevel:
             return
         case .measurement:
@@ -155,6 +170,8 @@ extension SettingsViewController: UITableViewDelegate {
         case .miBandConnect:
             return
         }
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     internal func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -162,7 +179,7 @@ extension SettingsViewController: UITableViewDelegate {
         let section = settingSections[indexPath.section]
         let row = section.items[indexPath.row]
         
-        self.toTheNextNavigation(at: row.destination)
+        self.toTheNextNavigation(at: row.destination, with: section.id, and: row.id)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
