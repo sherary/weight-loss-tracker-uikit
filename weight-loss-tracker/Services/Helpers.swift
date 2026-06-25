@@ -114,85 +114,13 @@ final class Helpers {
         return calendar.date(from: components)
     }
     
-    internal static func getLastDateOfMonth(for date: Date) -> Int {
-        guard let dayRange = calendar.range(of: .day, in: .month, for: date) else { return 0 }
-        return dayRange.count
-    }
-    
     internal static func getComponentsFrom(from date: Date, components: Set<Calendar.Component>) -> DateComponents {
         return calendar.dateComponents(components, from: date)
-    }
-    
-    internal static func getTotalWeeksInMonth(from date: Date) -> Int {
-        if let weekRange = calendar.range(of: .weekOfMonth, in: .month, for: date) {
-            return weekRange.count
-        }
-        
-        return 0
-    }
-    
-    internal static func getDateRanges(from components: DateComponents, type: Int = 0) -> DateRanges? {
-        var dateRanges = DateRanges()
-        
-        switch type {
-        case 0:
-            guard let weekIndex = components.weekOfMonth,
-                  let startDate = Helpers.getFirstDayOfWeek(weekIndex: weekIndex, in: components),
-                  let endDate = Calendar.current.date(byAdding: .day, value: 6, to: startDate)
-            else { return nil }
-            
-            dateRanges = DateRanges(type: type, value: weekIndex, startDate: startDate, endDate: endDate)
-        case 1:
-            guard let monthIndex = components.month,
-                  let year = components.year,
-                  let startDate = Helpers.composeDate(year: year, month: monthIndex, date: 1)
-            else { return nil }
-            
-            let dateCount = Helpers.getLastDateOfMonth(for: startDate)
-            guard let endDate = Calendar.current.date(byAdding: .day, value: dateCount, to: startDate) else { return nil }
-            
-            dateRanges = DateRanges(type: type, value: monthIndex, startDate: startDate, endDate: endDate)
-        case 2:
-            guard let year = components.year,
-                  let startDate = Helpers.composeDate(year: year, month: 1, date: 1),
-                  let endDate = Helpers.composeDate(year: year, month: 12, date: 31)
-            else { return nil }
-            
-            dateRanges = DateRanges(type: type, value: year, startDate: startDate, endDate: endDate)
-        default:
-            break
-        }
-        
-        return dateRanges
-    }
-    
-    internal static func getFirstDayOfWeek(weekIndex: Int, in component: DateComponents) -> Date? {
-        var targetComponents = self.localComponent
-        targetComponents.year = component.year
-        targetComponents.month = component.month
-        targetComponents.weekOfMonth = weekIndex
-        targetComponents.weekday = Calendar.current.firstWeekday
-        
-        return calendar.date(from: targetComponents)
-    }
-    
-    internal static func composeDate(year: Int, month: Int, date: Int) -> Date? {
-        var components = self.localComponent
-        components.year = year
-        components.month = month
-        components.day = date
-        components.timeZone = TimeZone.current
-        
-        return calendar.date(from: components)
     }
     
     internal static func getLastDateOfMonth(for date: Date) -> Int {
         guard let dayRange = calendar.range(of: .day, in: .month, for: date) else { return 0 }
         return dayRange.count
-    }
-    
-    internal static func getComponentsFrom(from date: Date, components: Set<Calendar.Component>) -> DateComponents {
-        return calendar.dateComponents(components, from: date)
     }
     
     internal static func getTotalWeeksInMonth(from date: Date) -> Int {
