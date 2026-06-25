@@ -5,12 +5,16 @@
 //  Created by Sherary Apriliana on 23/06/26.
 //
 
+import UIKit
+
 internal struct SettingSection: Codable {
+    var id: Int
     var title: String
     var items: [SettingItems]
     var description: String?
     
-    init(title: String, items: [SettingItems], description: String? = nil) {
+    init(sectionId: Int = 0, title: String, items: [SettingItems], description: String? = nil) {
+        self.id = sectionId
         self.title = title
         self.items = items
         self.description = description

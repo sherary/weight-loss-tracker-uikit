@@ -62,6 +62,37 @@ extension UIView {
     }
 }
 
+extension UITextField {
+    internal func setSymbol(with symbol: String, on sides: [UIRectEdge], padding: CGFloat = 10) {
+        let suffixLabel = UILabel()
+        suffixLabel.text = symbol
+        suffixLabel.textColor = .gray
+        suffixLabel.font = .systemFont(ofSize: padding * 1.5)
+        suffixLabel.sizeToFit()
+        suffixLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        let containerView = UIView()
+        containerView.addSubview(suffixLabel)
+        
+        NSLayoutConstraint.activate([
+            containerView.widthAnchor.constraint(equalToConstant: padding * 2.5),
+            containerView.heightAnchor.constraint(equalToConstant: padding * 2.5),
+            suffixLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            suffixLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+        ])
+        
+        for side in sides {
+            if side == .left {
+                self.leftView = containerView
+                self.leftViewMode = .always
+            } else if side == .right {
+                self.rightView = containerView
+                self.rightViewMode = .always
+            }
+        }
+    }
+}
+
 extension Double {
     internal func roundedToNearest(_ threshold: Double, rule: FloatingPointRoundingRule) -> Double {
         let floorValue = self.rounded(rule)
