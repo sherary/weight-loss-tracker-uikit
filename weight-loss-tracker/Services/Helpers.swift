@@ -131,6 +131,16 @@ final class Helpers {
         return 0
     }
     
+    internal static func composeDate(year: Int, month: Int, date: Int) -> Date {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = date
+        components.timeZone = TimeZone.current
+        
+        return Calendar.current.date(from: components)!
+    }
+    
     internal static func removeExcessiveCommas(text: String) -> String {
         let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
         var result = ""
