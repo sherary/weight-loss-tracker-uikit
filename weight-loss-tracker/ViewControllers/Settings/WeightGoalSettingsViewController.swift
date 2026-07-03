@@ -9,18 +9,14 @@ import UIKit
 
 final class WeightGoalSettingsViewController: UIViewController {
     private lazy var weightGoalSettingsView = WeightGoalSettingsView()
-    private var setting: SettingSection?
+    private var setting: SettingItems?
     
-    internal var id: (sectionId: Int?, settingId: Int?) {
+    internal var settingId: String? {
         didSet {
-            if let sectionId = id.sectionId, let settingId = id.settingId {
-                setting = getSettingSection(for: sectionId, and: settingId)
+            if let settingId = settingId {
+                setting = SettingsService.getSetting(for: settingId)
                 
-                guard let setting = setting,
-                      let settingItem = setting.items.first(where: { $0.id == settingId })
-                else { return }
-                
-                self.weightGoalSettingsView.setting = settingItem
+                self.weightGoalSettingsView.setting = setting
             }
         }
     }
@@ -38,40 +34,12 @@ final class WeightGoalSettingsViewController: UIViewController {
     
     @objc private func saveSetting() {
         guard let weightInput = weightGoalSettingsView.textField.text,
-              let weightGoal = Int(weightInput)
+              let weightGoal = Double(weightInput)
         else { return }
         
-        guard let data = UserDefaults.standard.data(forKey: Configs.SETTINGS_KEY),
-            var decodedData = try? JSONDecoder().decode([SettingSection].self, from: data),
-            let setting = self.setting
-        else { return }
+        Settings.goalWeight = weightGoal
         
-        guard var settingItem = setting.items.first(where: { $0.id == id.settingId }) else {
-            return
-        }
-        settingItem.value = weightGoal
-        
-        guard let index = decodedData.firstIndex(where: { $0.id == id.sectionId }),
-            let item = decodedData.first(where: { $0.id == id.sectionId }),
-            let itemIndex = item.items.firstIndex(where: { $0.id == id.settingId })
-        else { return }
-
-        decodedData[index].items[itemIndex] = settingItem
-        
-        guard let encodedData = try? JSONEncoder().encode(decodedData) else { return }
-        
-        UserDefaults.standard.set(encodedData, forKey: Configs.SETTINGS_KEY)
         navigationController?.popViewController(animated: true)
     }
-    
-    private func getSettingSection(for sectionId: Int, and settingId: Int) -> SettingSection? {
-        guard let data = UserDefaults.standard.data(forKey: Configs.SETTINGS_KEY),
-              let decodedData = try? JSONDecoder().decode([SettingSection].self, from: data),
-              var settingSection = decodedData.first(where: { $0.id == sectionId })
-        else { return nil }
-        
-        settingSection.items = settingSection.items.filter({ $0.id == settingId })
-        
-        return settingSection
-    }
 }
+

@@ -43,7 +43,7 @@ final class ActivityLevelSettingsView: UIView {
               bounds.width > 0
         else { return }
         
-        pickerView.selectRow(data.value, inComponent: 0, animated: false)
+        pickerView.selectRow(Int(data.value), inComponent: 0, animated: false)
         appliedInitialChanges = true
     }
     

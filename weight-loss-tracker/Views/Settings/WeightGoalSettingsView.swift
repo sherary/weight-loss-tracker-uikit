@@ -16,7 +16,8 @@ final class WeightGoalSettingsView: UIView {
         didSet {
             guard let data = setting else { return }
             textField.text = "\(data.value)"
-            label.text = data.name
+            
+            label.text = Helpers.toTitleString(text: data.name)
         }
     }
     
