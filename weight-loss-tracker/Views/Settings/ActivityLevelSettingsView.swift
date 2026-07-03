@@ -1,22 +1,25 @@
 //
-//  WeightGoalSettingsView.swift
+//  ActivityLevelSettingsView.swift
 //  weight-loss-tracker
 //
-//  Created by Sherary Apriliana on 24/06/26.
+//  Created by Sherary Apriliana on 25/06/26.
 //
 
 import UIKit
 
-final class WeightGoalSettingsView: UIView {
-    private let label = UILabel()
-    internal let textField = UITextField()
+final class ActivityLevelSettingsView: UIView {
+    private var label = UILabel()
+    private var appliedInitialChanges = false
+    
+    internal var pickerView = UIPickerView()
     internal var saveBtn = UIButton()
     
     internal var setting: SettingItems? {
         didSet {
-            guard let data = setting else { return }
-            textField.text = "\(data.value)"
-            label.text = data.name
+            label.text = setting?.name
+            appliedInitialChanges = false
+            
+            setInitialSelection()
         }
     }
     
@@ -28,6 +31,22 @@ final class WeightGoalSettingsView: UIView {
         setupLayout()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        setInitialSelection()
+    }
+    
+    private func setInitialSelection() {
+        guard !appliedInitialChanges,
+              let data = setting,
+              bounds.width > 0
+        else { return }
+        
+        pickerView.selectRow(Int(data.value), inComponent: 0, animated: false)
+        appliedInitialChanges = true
+    }
+    
     required init?(coder: NSCoder) {
         fatalError()
     }
@@ -37,16 +56,6 @@ final class WeightGoalSettingsView: UIView {
         
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textAlignment = .natural
-        label.text = setting?.name ?? "Goal Weight"
-        
-        textField.font = .systemFont(ofSize: 16, weight: .regular)
-        textField.textColor = .label
-        textField.textAlignment = .left
-        textField.placeholder = "48"
-        textField.keyboardType = .numberPad
-        textField.clearButtonMode = .whileEditing
-        textField.borderStyle = .roundedRect
-        textField.setSymbol(with: "kg", on: [.right])
         
         var btnConfig = UIButton.Configuration.borderedProminent()
         btnConfig.title = "Save"
@@ -57,17 +66,17 @@ final class WeightGoalSettingsView: UIView {
         btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         saveBtn.configuration = btnConfig
         
-        let vStack = UIStackView(arrangedSubviews: [label, textField, saveBtn])
+        let vStack = UIStackView(arrangedSubviews: [label, pickerView, saveBtn])
         vStack.axis = .vertical
         vStack.alignment = .leading
         vStack.distribution = .fill
-        vStack.spacing = 16
+        vStack.spacing = 0
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(vStack)
         
         NSLayoutConstraint.activate([
-            textField.widthAnchor.constraint(equalTo: layoutMarginsGuide.widthAnchor),
+            pickerView.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor),
             vStack.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             vStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             vStack.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),

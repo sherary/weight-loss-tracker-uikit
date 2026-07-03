@@ -1,25 +1,23 @@
 //
-//  ActivityLevelSettingsView.swift
+//  WeightGoalSettingsView.swift
 //  weight-loss-tracker
 //
-//  Created by Sherary Apriliana on 25/06/26.
+//  Created by Sherary Apriliana on 24/06/26.
 //
 
 import UIKit
 
-final class ActivityLevelSettingsView: UIView {
-    private var label = UILabel()
-    private var appliedInitialChanges = false
-    
-    internal var pickerView = UIPickerView()
+final class WeightGoalSettingsView: UIView {
+    private let label = UILabel()
+    internal let textField = UITextField()
     internal var saveBtn = UIButton()
     
     internal var setting: SettingItems? {
         didSet {
-            label.text = setting?.name
-            appliedInitialChanges = false
+            guard let data = setting else { return }
+            textField.text = "\(data.value)"
             
-            setInitialSelection()
+            label.text = Helpers.toTitleString(text: data.name)
         }
     }
     
@@ -31,22 +29,6 @@ final class ActivityLevelSettingsView: UIView {
         setupLayout()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        setInitialSelection()
-    }
-    
-    private func setInitialSelection() {
-        guard !appliedInitialChanges,
-              let data = setting,
-              bounds.width > 0
-        else { return }
-        
-        pickerView.selectRow(data.value, inComponent: 0, animated: false)
-        appliedInitialChanges = true
-    }
-    
     required init?(coder: NSCoder) {
         fatalError()
     }
@@ -56,6 +38,16 @@ final class ActivityLevelSettingsView: UIView {
         
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textAlignment = .natural
+        label.text = setting?.name ?? "Goal Weight"
+        
+        textField.font = .systemFont(ofSize: 16, weight: .regular)
+        textField.textColor = .label
+        textField.textAlignment = .left
+        textField.placeholder = "48"
+        textField.keyboardType = .numberPad
+        textField.clearButtonMode = .whileEditing
+        textField.borderStyle = .roundedRect
+        textField.setSymbol(with: "kg", on: [.right])
         
         var btnConfig = UIButton.Configuration.borderedProminent()
         btnConfig.title = "Save"
@@ -66,17 +58,17 @@ final class ActivityLevelSettingsView: UIView {
         btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         saveBtn.configuration = btnConfig
         
-        let vStack = UIStackView(arrangedSubviews: [label, pickerView, saveBtn])
+        let vStack = UIStackView(arrangedSubviews: [label, textField, saveBtn])
         vStack.axis = .vertical
         vStack.alignment = .leading
         vStack.distribution = .fill
-        vStack.spacing = 0
+        vStack.spacing = 16
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(vStack)
         
         NSLayoutConstraint.activate([
-            pickerView.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor),
+            textField.widthAnchor.constraint(equalTo: layoutMarginsGuide.widthAnchor),
             vStack.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             vStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             vStack.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),

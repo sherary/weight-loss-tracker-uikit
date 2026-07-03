@@ -11,6 +11,7 @@ final class TextCarouselView: UIView {
     private lazy var label: UILabel = UILabel()
     private lazy var backBtn: UIButton = UIButton()
     private lazy var forwardBtn: UIButton = UIButton()
+    
     private struct Tap {
         static let back: Int = -1
         static let forward: Int = 1
@@ -18,9 +19,17 @@ final class TextCarouselView: UIView {
     
     internal var onTapped: ((Int) -> Void)?
     
-    internal var text: String = "Week 0" {
+    internal var text: String = "Text" {
         didSet {
             label.text = text
+        }
+    }
+    
+    internal var font: UIFont? {
+        didSet {
+            if let font = font {
+                label.font = font
+            }
         }
     }
     
@@ -61,8 +70,8 @@ final class TextCarouselView: UIView {
         
         let hStack: UIStackView = UIStackView(arrangedSubviews: [backBtn, label, forwardBtn])
         hStack.axis = .horizontal
-        hStack.spacing = 4
-        hStack.distribution = .fillProportionally
+        hStack.spacing = label.font.pointSize * 1.25
+        hStack.distribution = .equalSpacing
         hStack.alignment = .center
         hStack.translatesAutoresizingMaskIntoConstraints = false
         

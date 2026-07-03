@@ -157,4 +157,29 @@ final class Helpers {
         
         return result
     }
+    
+    internal static func toTitleString(text: String) -> String {
+        var result = ""
+        var symbolMarked = false
+        
+        for (index, string) in text.enumerated() {
+            if index == 0 || symbolMarked {
+                result.append(string.uppercased())
+                symbolMarked = false
+                
+                continue
+            }
+            
+            if string == "_" {
+                result.append(" ")
+                symbolMarked = true
+                
+                continue
+            }
+            
+            result.append(string)
+        }
+        
+        return result
+    }
 }

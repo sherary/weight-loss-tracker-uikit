@@ -142,3 +142,8 @@ extension DateComponents {
         return component
     }()
 }
+
+extension Notification.Name {
+    internal static let settingsDidChange = Notification.Name("settingDidChange")
+    internal static let weightStoreDidChange = Notification.Name("weightStoreDidChange")
+}

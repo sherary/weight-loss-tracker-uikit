@@ -10,7 +10,7 @@ import UIKit
 final class SettingsViewController: UIViewController {
     private let settingsView = SettingsView()
     private var settingSections: [SettingSection] = []
-
+    
     override func loadView() {
         self.view = settingsView
     }
@@ -39,23 +39,42 @@ final class SettingsViewController: UIViewController {
 }
 
 extension SettingsViewController {
-    private func valueHandlerById(for id: Int, with value: Int) -> String {
+    private func valueHandlerById(for id: String, with value: Double) -> String {
         switch id {
-        case 1:
-            return "\(value) kg"
-        case 2:
-            return SettingsService.activityLevelParser(value)
-        case 3:
-            return self.measurementUnitParser(value)
-        case 4:
-            return self.dateRangeParser(value)
-        case 5:
-            return self.monthlyRangeParser(value)
-        case 6, 7:
-            return value == 0 ? "Not Connected" : "Connected"
+        case SettingKey.goalWeight.name:
+            guard let weight = weightParser(value) else {
+                return "\(value) kg"
+            }
+            
+            return "\(Int(weight.number)) \(weight.unit)"
+        case SettingKey.activityLevel.name:
+            return SettingsService.activityLevelParser(Int(value))
+        case SettingKey.measurement.name:
+            return self.measurementUnitParser(Int(value))
+        case SettingKey.dayStart.name:
+            return self.dateRangeParser(Int(value))
+        case SettingKey.monthStart.name:
+            return self.monthlyRangeParser(Int(value))
+        case SettingKey.appleWatchConnect.name, SettingKey.miBandConnect.name:
+            return Int(value) == 0 ? "Not Connected" : "Connected"
         default:
             return "\(value)"
         }
+    }
+    
+    private func weightParser(_ weight: Double) -> (number: Double, unit: String)? {
+        var result: (number: Double, unit: String) = (number: 0, unit: "")
+        let measurementUnitSettings = Settings.measurementUnit
+        
+        if Int(measurementUnitSettings) == MeasurementUnits.metric.index {
+            result.number = Double(weight) / 2.20462
+            result.unit = "kg"
+        } else {
+            result.number = Double(weight) * 2.20462
+            result.unit = "lbs"
+        }
+        
+        return result
     }
     
     private func measurementUnitParser(_ unit: Int) -> String {
@@ -136,25 +155,28 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 extension SettingsViewController: UITableViewDelegate {
-    private func toTheNextNavigation(at destination: Destination, with sectionId: Int, and settingId: Int) {
+    private func toTheNextNavigation(at destination: SettingKey, with sectionId: Int, and settingId: String) {
         let vc: UIViewController
         
         switch destination {
         case .goalWeight:
             let weightVC = WeightGoalSettingsViewController()
-            weightVC.id = (sectionId: sectionId, settingId: settingId)
+            weightVC.settingId = settingId
             
             vc = weightVC
         case .activityLevel:
             let activityLevelVC = ActivityLevelSettingsViewController()
-            activityLevelVC.id = (sectionId: sectionId, settingId: settingId)
+            activityLevelVC.settingId = settingId
             
             vc = activityLevelVC
         case .measurement:
+            let measurementVC = MeasurementUnitSettingsViewController()
+            measurementVC.settingId = settingId
+            
+            vc = measurementVC
+        case .dayStart:
             return
-        case .dayRange:
-            return
-        case .monthlyRange:
+        case .monthStart:
             return
         case .appleWatchConnect:
             return
