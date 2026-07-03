@@ -71,7 +71,3 @@ final class WeightStore {
         NotificationCenter.default.post(name: .weightStoreDidChange, object: nil)
     }
 }
-
-extension Notification.Name {
-    static let weightStoreDidChange = Notification.Name("weightStoreDidChange")
-}
