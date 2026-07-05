@@ -11,7 +11,8 @@ final class SettingsService {
     internal static let shared = SettingsService()
     
     private(set) var activityLevels: [String] = []
-
+    private(set) var dayNames: [String] = DayNames
+    
     private init() {
         load()
     }
