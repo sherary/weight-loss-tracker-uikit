@@ -185,9 +185,15 @@ extension SettingsViewController: UITableViewDelegate {
             
             vc = monthStartVC
         case .appleWatchConnect:
-            return
+            let appleWatchConnectVC = AppleWatchConnectSettingsViewController()
+            appleWatchConnectVC.settingId = settingId
+            
+            vc = appleWatchConnectVC
         case .miBandConnect:
-            return
+            let miBandConnectVC = MiBandConnectSettingsViewController()
+            miBandConnectVC.settingId = settingId
+            
+            vc = miBandConnectVC
         }
         
         navigationController?.pushViewController(vc, animated: true)
