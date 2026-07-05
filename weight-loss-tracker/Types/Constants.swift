@@ -40,6 +40,8 @@ internal enum ActivityLevels: Double, Codable, CaseIterable {
     }
 }
 
+internal let DayNames: [String] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
 internal enum MeasurementUnits: String, CaseIterable {
     case metric
     case imperial

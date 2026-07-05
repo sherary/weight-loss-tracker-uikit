@@ -91,7 +91,7 @@ extension SettingsViewController {
     }
     
     private func dateRangeParser(_ num: Int) -> String {
-        let days: [String] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        let days: [String] = DayNames
         var endIndex = num - 1
         if endIndex < 0 {
             endIndex = days.count - 1
@@ -175,9 +175,15 @@ extension SettingsViewController: UITableViewDelegate {
             
             vc = measurementVC
         case .dayStart:
-            return
+            let dayStartVC = DayStartSettingsViewController()
+            dayStartVC.settingId = settingId
+            
+            vc = dayStartVC
         case .monthStart:
-            return
+            let monthStartVC = MonthlyStartSettingsViewController()
+            monthStartVC.settingId = settingId
+            
+            vc = monthStartVC
         case .appleWatchConnect:
             return
         case .miBandConnect:
