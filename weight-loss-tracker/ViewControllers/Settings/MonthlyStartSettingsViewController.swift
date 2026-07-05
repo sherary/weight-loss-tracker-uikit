@@ -27,11 +27,13 @@ final class MonthlyStartSettingsViewController: UIViewController {
     }
     
     private func validatorWarning() {
-        let action = UIAlertAction(title: "OK", style: .default) { (action) in
-            self.dismiss(animated: true)
+        if monthlyStartSettingsView.alert.actions.isEmpty {
+            let action = UIAlertAction(title: "OK", style: .default) { (action) in
+                self.dismiss(animated: true)
+            }
+            
+            monthlyStartSettingsView.alert.addAction(action)
         }
-        
-        monthlyStartSettingsView.alert.addAction(action)
         
         self.present(monthlyStartSettingsView.alert, animated: true)
     }
