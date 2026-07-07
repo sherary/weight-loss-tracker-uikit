@@ -1,10 +1,3 @@
-//
-//  Settings.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 23/06/26.
-//
-
 import UIKit
 
 @propertyWrapper

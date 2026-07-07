@@ -1,10 +1,3 @@
-//
-//  Constants.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 19/05/26.
-//
-
 import CoreFoundation
 import UIKit
 
