@@ -25,8 +25,6 @@ internal struct SettingsViewModel {
         
         result.number = weight
         result.unit = Int(unit) == MeasurementUnits.metric.index ? "kg" : "lbs"
-
-        UserDefaults.standard.removeObject(forKey: "measurementChanged")
         
         return result
     }
