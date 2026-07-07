@@ -1,0 +1,30 @@
+# Normalize line endings
+* text=auto
+
+# Swift source files
+*.swift text diff
+
+# Xcode project — union merge reduces painful pbxproj conflicts
+*.pbxproj merge=union
+
+# Storyboards and XIBs (even if you don't use them now, good to have)
+*.storyboard merge=union
+*.xib merge=union
+
+# Binary assets — prevent Git from diffing these
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# Fonts
+*.ttf binary
+*.otf binary
+
+# Compiled assets
+*.xcassets binary
+
+# Ignore Pods in GitHub language stats (if you ever add CocoaPods)
+Pods/** linguist-vendored
