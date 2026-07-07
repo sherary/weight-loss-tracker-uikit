@@ -1,16 +1,10 @@
-//
-//  MeasurementUnitSettingsViewController.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 25/06/26.
-//
-
 import UIKit
 
 final class MeasurementUnitSettingsViewController: UIViewController {
     private let measurementView = MeasurementUnitSettingsView()
     private var setting: SettingItems?
     private var measurementUnits: [String] = []
+//    private var didSave: Bool = false
     private var selectedIndex = 0 {
         didSet {
             if selectedIndex > 1 || selectedIndex < 0 {
@@ -23,8 +17,8 @@ final class MeasurementUnitSettingsViewController: UIViewController {
         didSet {
             if let settingId = settingId {
                 setting = SettingsService.getSetting(for: settingId)
-                
                 self.measurementView.setting = setting
+                
                 guard let setting = setting else { return }
                 self.selectedIndex = Int(setting.value)
             }
@@ -61,6 +55,16 @@ final class MeasurementUnitSettingsViewController: UIViewController {
         measurementView.textCarousel.text = measurementUnits[selectedIndex]
     }
     
+//    override func willMove(toParent parent: UIViewController?) {
+//        super.willMove(toParent: parent)
+//        
+//        if parent == nil {
+//            if !didSave {
+//                UserDefaults.standard.set(false, forKey: "measurementChanged")
+//            }
+//        }
+//    }
+    
     private func getAllMeasurementUnits() {
         measurementUnits.removeAll()
         
@@ -70,7 +74,13 @@ final class MeasurementUnitSettingsViewController: UIViewController {
     }
     
     @objc private func saveSetting() {
-        Settings.measurementUnit = Double(selectedIndex)
+        if Settings.measurementUnit != Double(selectedIndex) {
+            let settingsVM = SettingsViewModel()
+            let parsedWeight = settingsVM.parseWeight(to: selectedIndex, weight: Settings.goalWeight)
+            Settings.measurementUnit = Double(selectedIndex)
+            Settings.goalWeight = parsedWeight
+        }
+        
         navigationController?.popViewController(animated: true)
     }
 }
