@@ -32,33 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Settings.miBandConnect = 0
         #endif
         
-        let rootVC = EntryViewController()
-        let entryRootNav = UINavigationController(rootViewController: rootVC)
-        entryRootNav.tabBarItem = UITabBarItem(
-            title: "Home",
-            image: UIImage(systemName: "house"),
-            selectedImage: UIImage(systemName: "house.fill")
-        )
-        
-        let historyVC = HistoryViewController()
-        let historyNav = UINavigationController(rootViewController: historyVC)
-        historyNav.tabBarItem = UITabBarItem(
-            title: "History",
-            image: UIImage(systemName: "clock"),
-            selectedImage: UIImage(systemName: "clock.fill")
-        )
-        
-        let settingsVC = SettingsViewController()
-        let settingsNav = UINavigationController(rootViewController: settingsVC)
-        settingsNav.tabBarItem = UITabBarItem(
-            title: "Settings",
-            image: UIImage(systemName: "gear"),
-            selectedImage: UIImage(systemName: "gearshape")
-        )
-        
-        let tabBar = UITabBarController()
-        tabBar.viewControllers = [historyNav, entryRootNav, settingsNav]
-        tabBar.selectedIndex = 1
+        let tabBar = TabBarViewModel.makeTabBar()
         
         window.rootViewController = tabBar
         self.window = window
