@@ -28,13 +28,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Settings.measurementUnit = 0
         Settings.dayStart = 0
         Settings.monthStart = 1
-        Settings.appleWatchConnect = 0
-        Settings.miBandConnect = 0
+        Settings.appleWatchConnect = false
+        Settings.miBandConnect = false
+        
+        Settings.firstName = "Moe"
+        Settings.lastName = "Power"
+        Settings.sex = 0
+        Settings.weight = 55
+        Settings.height = 155
+        Settings.age = 20
+        Settings.username = "moepower"
         #endif
         
         let tabBar = TabBarViewModel.makeTabBar()
-        
         window.rootViewController = tabBar
+        
         self.window = window
         window.makeKeyAndVisible()
     }

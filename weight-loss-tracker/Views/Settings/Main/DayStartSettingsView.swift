@@ -37,10 +37,11 @@ final class DayStartSettingsView: UIView {
     private func setInitialSelection() {
         guard !appliedInitialChanges,
               let data = setting,
+              let value = data.value.intValue,
               bounds.width > 0
         else { return }
         
-        pickerView.selectRow(Int(data.value), inComponent: 0, animated: false)
+        pickerView.selectRow(value, inComponent: 0, animated: false)
         appliedInitialChanges = true
     }
     

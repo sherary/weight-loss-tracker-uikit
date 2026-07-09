@@ -37,7 +37,7 @@ final class ActivityLevelSettingsViewController: UIViewController {
     }
     
     @objc private func saveSetting() {
-        let selectedRow = Double(activityLevelSettingsView.pickerView.selectedRow(inComponent: 0))
+        let selectedRow = activityLevelSettingsView.pickerView.selectedRow(inComponent: 0)
         
         Settings.activityLevel = selectedRow
         navigationController?.popViewController(animated: true)
