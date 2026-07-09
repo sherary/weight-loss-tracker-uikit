@@ -1,29 +1,27 @@
-//
-//  StatsView.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 29/05/26.
-//
-
 import UIKit
 
 final class SettingsView: UIView {
     internal var userAvatar = UserAvatarView()
     internal var tableView = UITableView(frame: .zero, style: .insetGrouped)
+    internal var userAvatarOnTapToVC: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setupCollectionView()
+        setupLayout()
+        
+        userAvatar.onTap = { [weak self] in
+            self?.userAvatarOnTapToVC?()
+        }
     }
     
     required init?(coder: NSCoder) {
         fatalError()
     }
     
-    private func setupCollectionView() {
+    private func setupLayout() {
         self.backgroundColor = .secondarySystemBackground
-        self.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)
+        self.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 24, leading: 16, bottom: 24, trailing: 16)
         
         userAvatar.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false

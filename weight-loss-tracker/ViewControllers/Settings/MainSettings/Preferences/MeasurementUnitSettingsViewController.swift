@@ -72,6 +72,7 @@ final class MeasurementUnitSettingsViewController: UIViewController {
             Settings.goalWeight = parsedWeight
         }
         
-        navigationController?.popViewController(animated: true)
+        guard let navController = navigationController else { return }
+        navController.popViewController(animated: true)
     }
 }

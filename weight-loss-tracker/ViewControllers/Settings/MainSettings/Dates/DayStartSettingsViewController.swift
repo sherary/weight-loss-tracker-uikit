@@ -30,7 +30,7 @@ final class DayStartSettingsViewController: UIViewController {
     }
     
     @objc private func saveSetting() {
-        let selectedRow = Double(dayStartSettingsView.pickerView.selectedRow(inComponent: 0))
+        let selectedRow = dayStartSettingsView.pickerView.selectedRow(inComponent: 0)
         
         Settings.dayStart = selectedRow
         navigationController?.popViewController(animated: true)

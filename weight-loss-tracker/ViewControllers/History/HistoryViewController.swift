@@ -213,20 +213,17 @@ final class HistoryViewController: UIViewController {
 
 extension HistoryViewController: UITableViewDataSource {
     // Set how many row
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.entries.count
     }
     
     // configure cell
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Dequeue a recycled cell (or get a fresh one if none to recycle)
+    internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeightCell", for: indexPath)
         
-        // Get data for THIS row
         let entry = self.entries[indexPath.row]
         let nextEntry = self.entries[indexPath.row == 0 ? indexPath.row : indexPath.row - 1]
         
-        // Configure EVERY visible property - cell may have stale content
         var config = cell.defaultContentConfiguration()
         let imageConfig = setImage(remainder: nextEntry.weight - entry.weight)
         config.image = imageConfig.img
@@ -275,7 +272,6 @@ extension HistoryViewController: UITableViewDataSource {
 }
 
 extension HistoryViewController: UITableViewDelegate {
-    // The user tapped a row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         

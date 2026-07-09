@@ -17,6 +17,14 @@ final class SettingsViewController: UIViewController {
         settingsView.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "settings")
         settingsView.tableView.dataSource = self
         settingsView.tableView.delegate = self
+        
+        settingsView.userAvatar.user = settingsVM.getUserInfo()
+        settingsView.userAvatarOnTapToVC = { [weak self] in
+            guard let self = self else { return }
+            
+            let vc = UserProfileSettingsViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -1,14 +1,7 @@
-//
-//  Settings+UITableViewDelegate.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 07/07/26.
-//
-
 import UIKit
 
 extension SettingsViewController: UITableViewDelegate {
-    private func toTheNextNavigation(at destination: SettingKey, with sectionId: Int, and settingId: String) {
+    private func toTheNextNavigation(at destination: SettingKey, with settingId: String) {
         let vc: UIViewController
         
         switch destination {
@@ -47,20 +40,24 @@ extension SettingsViewController: UITableViewDelegate {
             miBandConnectVC.settingId = settingId
             
             vc = miBandConnectVC
+        default:
+            return
         }
         
-        navigationController?.pushViewController(vc, animated: true)
+        guard let navController = navigationController else { return }
+        navController.pushViewController(vc, animated: true)
     }
     
     internal func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let section = settingSections[indexPath.section]
         let row = section.items[indexPath.row]
+        guard let destination = row.destination else { return }
         
-        self.toTheNextNavigation(at: row.destination, with: section.id, and: row.id)
+        self.toTheNextNavigation(at: destination, with: row.id)
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    internal func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let container = UIView()
         let label = UILabel()
         label.text = settingSections[section].title
@@ -81,7 +78,7 @@ extension SettingsViewController: UITableViewDelegate {
         return container
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    internal func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return UITableView.automaticDimension
     }
     
