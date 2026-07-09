@@ -28,6 +28,15 @@ internal enum SettingKey: String, CaseIterable, Codable {
     case appleWatchConnect = "apple_watch"
     case miBandConnect = "mi_band"
     
+    case firstName = "first_name"
+    case lastName = "last_name"
+    case sex = "sex"
+    case age = "age"
+    case height = "height"
+    case weight = "weight"
+    case username = "username"
+    case avatar = "avatar"
+    
     var name: String {
         return self.rawValue
     }
@@ -75,13 +84,40 @@ internal struct SettingSection: Codable {
 internal struct SettingItems: Codable {
     var id: String
     var name: String
-    var value: Double
-    var destination: SettingKey
+    var value: SettingValue
+    var destination: SettingKey?
     
-    init(id: String, name: String, value: Double = 0, destination: SettingKey) {
+    init(id: String, name: String, value: SettingValue, destination: SettingKey? = nil) {
         self.id = id
         self.name = name
         self.value = value
         self.destination = destination
+    }
+}
+
+internal enum SettingValue: Codable, Equatable {
+    case double(Double)
+    case int(Int)
+    case string(String)
+    case bool(Bool)
+    
+    var doubleValue: Double? {
+        if case .double(let value) = self { return value }
+        return nil
+    }
+    
+    var intValue: Int? {
+        if case .int(let value) = self { return value }
+        return nil
+    }
+    
+    var stringValue: String? {
+        if case .string(let value) = self { return value }
+        return nil
+    }
+    
+    var boolValue: Bool? {
+        if case .bool(let value) = self { return value }
+        return nil
     }
 }

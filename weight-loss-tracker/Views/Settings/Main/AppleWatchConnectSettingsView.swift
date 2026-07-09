@@ -15,10 +15,12 @@ final class AppleWatchConnectSettingsView: UIView {
     
     internal var setting: SettingItems? {
         didSet {
-            guard let setting = setting else { return }
+            guard let setting = setting,
+                  let isOn = setting.value.boolValue
+            else { return }
             
             label.text = setting.name
-            switchView.isOn = setting.value == 1
+            switchView.isOn = isOn
         }
     }
     

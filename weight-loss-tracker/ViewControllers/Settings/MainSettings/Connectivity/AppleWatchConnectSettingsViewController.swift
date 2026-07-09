@@ -36,7 +36,7 @@ final class AppleWatchConnectSettingsViewController: UIViewController {
     @objc private func saveSetting() {
         let isOn = appleWatchConnectView.switchView.isOn
         
-        Settings.appleWatchConnect = isOn ? 1 : 0
+        Settings.appleWatchConnect = isOn
         navigationController?.popViewController(animated: true)
     }
 }

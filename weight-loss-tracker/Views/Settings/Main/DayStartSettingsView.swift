@@ -1,16 +1,10 @@
-//
-//  MiBandConnectSettingsView.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 05/07/26.
-//
-
 import UIKit
 
-final class MiBandConnectSettingsView: UIView {
+final class DayStartSettingsView: UIView {
     private var label = UILabel()
+    private var appliedInitialChanges = false
     
-    internal var switchView = UISwitch()
+    internal var pickerView = UIPickerView()
     internal var saveBtn = UIButton()
     
     internal var setting: SettingItems? {
@@ -18,7 +12,9 @@ final class MiBandConnectSettingsView: UIView {
             guard let setting = setting else { return }
             
             label.text = setting.name
-            switchView.isOn = setting.value == 1
+            appliedInitialChanges = false
+            
+            setInitialSelection()
         }
     }
     
@@ -30,6 +26,23 @@ final class MiBandConnectSettingsView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        setInitialSelection()
+    }
+    
+    private func setInitialSelection() {
+        guard !appliedInitialChanges,
+              let data = setting,
+              let value = data.value.intValue,
+              bounds.width > 0
+        else { return }
+        
+        pickerView.selectRow(value, inComponent: 0, animated: false)
+        appliedInitialChanges = true
     }
     
     private func setupLayout() {
@@ -47,16 +60,17 @@ final class MiBandConnectSettingsView: UIView {
         btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         saveBtn.configuration = btnConfig
         
-        let vStack = UIStackView(arrangedSubviews: [label, switchView, saveBtn])
+        let vStack = UIStackView(arrangedSubviews: [label, pickerView, saveBtn])
         vStack.axis = .vertical
         vStack.alignment = .leading
         vStack.distribution = .fill
-        vStack.spacing = 16
+        vStack.spacing = 0
         vStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(vStack)
         
         NSLayoutConstraint.activate([
+            pickerView.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor),
             vStack.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             vStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             vStack.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),

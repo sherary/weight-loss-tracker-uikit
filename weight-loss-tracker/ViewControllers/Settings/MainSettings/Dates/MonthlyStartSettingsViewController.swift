@@ -40,7 +40,7 @@ final class MonthlyStartSettingsViewController: UIViewController {
     
     @objc private func saveSetting() {
         guard let data = monthlyStartSettingsView.textField.text,
-            let startingDate = Double(data),
+            let startingDate = Int(data),
         startingDate > 0 && startingDate <= 31 else {
             validatorWarning()
             

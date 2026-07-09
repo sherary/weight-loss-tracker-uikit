@@ -1,63 +1,176 @@
-//
-//  UserAvatar.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 22/06/26.
-//
-
 import UIKit
 
 final class UserAvatarView: UIView {
     private lazy var imageView = UIImageView()
     private lazy var label = UILabel()
+    private lazy var hStack: UIStackView = UIStackView(arrangedSubviews: [imageView, label])
     
+    private var imgWidth = NSLayoutConstraint()
+    private var imgHeight = NSLayoutConstraint()
+    
+    internal lazy var editBtn: UIButton = UIButton()
+    internal var onTap: (() -> Void)?
     internal var user: Users? {
         didSet {
-            guard let availableUserData = user else { return }
-            
-            self.setAvailableData(for: availableUserData)
-            self.setupLayout()
+            setAvailableData(for: user)
+        }
+    }
+    internal var context: Context = .settings {
+        didSet {
+            handleContext()
         }
     }
     
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: 160)
+    }
+    
+    convenience init(context: Context) {
+        self.init(frame: .zero)
+        self.context = context
+        
+        handleContext()
+    }
+    
     override init(frame: CGRect) {
+        self.context = .settings
         super.init(frame: frame)
         
-        self.backgroundColor = .clear
-        
-        setAvailableData(for: user)
-        setupLayout()
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
-        fatalError()
+        self.context = .settings
+        super.init(coder: coder)
+     
+        commonInit()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        imageView.layer.cornerRadius = imageView.frame.size.width / 2
+        updateImageSize()
+        
+        imageView.layer.cornerRadius = imageView.frame.width / 2
     }
     
-    private func setAvailableData(for user: Users?) {
-        if let userName = user?.firstName {
-            label.text = userName
-        } else {
-            label.text = "User"
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
+        UIView.animate(withDuration: 0.1) {
+            self.imageView.alpha = 0.8
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
+        UIView.animate(withDuration: 0.2) {
+            self.imageView.alpha = 1.0
+        }
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        
+        UIView.animate(withDuration: 0.2) {
+            self.imageView.alpha = 1.0
+        }
+    }
+    
+    private func commonInit() {
+        setupLayout()
+        setupConstraints()
+        setAvailableData(for: user)
+        setupTapGesture()
+        handleContext()
+    }
+    
+    private func updateImageSize() {
+        guard bounds.height > 0 else { return }
+        
+        var newSize: CGFloat = 0
+        
+        switch context {
+        case .settings:
+            newSize = bounds.height * 0.6
+        case .editProfile:
+            newSize = bounds.height * 0.9
         }
         
-        var img = UIImage(systemName: "person.crop.circle")
-        if let userAvatar = user?.avatar, let imgData = Data(base64Encoded: userAvatar) {
-            img = UIImage(data: imgData)
-        }
+        imgWidth.constant = newSize
+        imgHeight.constant = newSize
         
-        imageView.image = img
-        imageView.tintColor = .systemCyan
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func handleContext() {
+        switch context {
+        case .settings:
+            editBtn.isHidden = true
+            
+            hStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            hStack.addArrangedSubview(imageView)
+            hStack.addArrangedSubview(label)
+            
+        case .editProfile:
+            editBtn.isHidden = false
+            
+            hStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+            hStack.addArrangedSubview(imageView)
+            hStack.addArrangedSubview(editBtn)
+        }
+    }
+    
+    private func setupConstraints() {
+        imgWidth = imageView.widthAnchor.constraint(equalToConstant: intrinsicContentSize.height / 2)
+        imgHeight = imageView.heightAnchor.constraint(equalToConstant: intrinsicContentSize.height / 2)
+        
+        imgWidth.priority = .defaultHigh
+        imgHeight.priority = .defaultHigh
+        
+        NSLayoutConstraint.activate([
+            imgWidth,
+            imgHeight,
+            
+            hStack.centerXAnchor.constraint(equalTo: centerXAnchor),
+            hStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            hStack.leadingAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor),
+            hStack.trailingAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor)
+        ])
+        
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        addGestureRecognizer(tapGesture)
+        isUserInteractionEnabled = true
+    }
+    
+    @objc private func handleTap() {
+        animatePress()
+        
+        onTap?()
+    }
+    
+    private func animatePress() {
+        UIView.animate(withDuration: 0.1, animations: {
+            self.imageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            self.imageView.alpha = 0.6
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.imageView.transform = .identity
+                self.imageView.alpha = 1.0
+            }
+        }
     }
     
     private func setupLayout() {
-        imageView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        imageView.layer.cornerRadius = imageView.frame.size.width / 2
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
         
@@ -65,22 +178,42 @@ final class UserAvatarView: UIView {
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        let hStack: UIStackView = UIStackView(arrangedSubviews: [imageView, label])
+        var btnConfig = UIButton.Configuration.borderedTinted()
+        btnConfig.title = "Edit Profile Picture"
+        btnConfig.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+            
+            return outgoing
+        }
+        
+        btnConfig.baseBackgroundColor = .blue
+        btnConfig.baseForegroundColor = .systemIndigo
+        btnConfig.cornerStyle = .capsule
+        btnConfig.titlePadding = 24
+        btnConfig.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+        editBtn.configuration = btnConfig
+        
         hStack.axis = .vertical
         hStack.alignment = .center
+        hStack.spacing = 12
         hStack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(hStack)
+    }
+    
+    private func setAvailableData(for user: Users?) {
+        var img = UIImage(systemName: "person.crop.circle")
+        label.text = "User"
         
-        NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: imageView.frame.width),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
+        if let user = user {
+            label.text = "\(user.firstName) \( user.lastName)"
             
-            hStack.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
-            hStack.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor),
-            
-            self.heightAnchor.constraint(equalToConstant: imageView.frame.height * 2),
-            self.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
-        ])
+            guard let avatar = user.avatar, let parsedData = Data(base64Encoded: avatar) else { return }
+            img = UIImage(data: parsedData)
+        }
+        
+        imageView.image = img
+        imageView.tintColor = .systemGray
     }
 }

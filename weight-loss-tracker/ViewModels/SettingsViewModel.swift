@@ -2,7 +2,7 @@ import Foundation
 
 internal struct SettingsViewModel {
     internal func measurementUnitParser(_ unit: Int) -> String {
-        var result: String = ""
+        var result: String = Empty.String
         
         for (index, item) in MeasurementUnits.allCases.enumerated() {
             if index == unit {
@@ -19,7 +19,7 @@ internal struct SettingsViewModel {
     }
     
     internal func weightParser(_ weight: Double) -> (number: Double, unit: String)? {
-        var result: (number: Double, unit: String) = (number: 0, unit: "")
+        var result: (number: Double, unit: String) = (number: 0, unit: Empty.String)
         let unit = Settings.measurementUnit
         let weight = Settings.goalWeight
         
@@ -71,26 +71,47 @@ internal struct SettingsViewModel {
         return result
     }
     
-    internal func valueHandlerById(for id: String, with value: Double) -> String {
+    internal func valueHandlerById(for id: String, with value: SettingValue) -> String {
         switch id {
         case SettingKey.goalWeight.name:
-            guard let weight = weightParser(value) else {
+            guard let doubleValue = value.doubleValue,
+                  let weight = weightParser(doubleValue)
+            else {
                 return "\(value) kg"
             }
             
             return "\(Int(weight.number)) \(weight.unit)"
         case SettingKey.activityLevel.name:
-            return activityLevelParser(Int(value))
+            guard let intValue = value.intValue else { return Empty.String }
+            
+            return activityLevelParser(intValue)
         case SettingKey.measurement.name:
-            return measurementUnitParser(Int(value))
+            guard let intValue = value.intValue else { return Empty.String }
+            
+            return measurementUnitParser(intValue)
         case SettingKey.dayStart.name:
-            return dateRangeParser(Int(value))
+            guard let intValue = value.intValue else { return Empty.String }
+            
+            return dateRangeParser(intValue)
         case SettingKey.monthStart.name:
-            return monthlyRangeParser(Int(value))
+            guard let intValue = value.intValue else { return Empty.String }
+            
+            return monthlyRangeParser(intValue)
         case SettingKey.appleWatchConnect.name, SettingKey.miBandConnect.name:
-            return Int(value) == 0 ? "Not Connected" : "Connected"
+            guard let intValue = value.intValue else { return Empty.String }
+            
+            return intValue == 0 ? "Not Connected" : "Connected"
         default:
             return "\(value)"
         }
+    }
+    
+    internal func getUserInfo() -> Users {
+        return Users(
+            firstName: Settings.firstName,
+            lastName: Settings.lastName,
+            height: Double(Settings.height),
+            sex: Settings.sex == 0 ? "Female" : "Male"
+        )
     }
 }

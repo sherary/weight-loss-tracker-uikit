@@ -1,43 +1,52 @@
-//
-//  Users.swift
-//  weight-loss-tracker
-//
-//  Created by Sherary Apriliana on 27/05/26.
-//
-
 import Foundation
 
-internal struct MutableInfo: Codable {
+internal struct Bio: Codable {
     var id: Int
+    var userId: UUID
     var age: Int
     var activityLevel: String
     var weight: Double
     var tdee: Double
     var bmr: Double
+    var inputDate = Date()
     
-    init(age: Int, activityLevel: String, weight: Double, tdee: Double, bmr: Double) {
+    init(id: Int = 0, userId: UUID, age: Int, activityLevel: String, weight: Double, tdee: Double, bmr: Double) {
+        self.userId = userId
         self.age = age
         self.activityLevel = activityLevel
         self.weight = weight
         self.tdee = tdee
         self.bmr = bmr
-        self.id = 0
+        self.id = id
     }
 }
 
 internal struct Users: Codable {
-    var id: UUID?
+    var id = UUID()
+    var credentialId: UUID
     var firstName: String
     var lastName: String
     var height: Double
     var sex: String
     var avatar: String?
-    var mutableInfo: MutableInfo?
+    var bio: Bio?
     
-    init(firstName: String, lastName: String, height: Double, sex: String) {
+    init(credentialId: UUID = UUID(), firstName: String, lastName: String, height: Double, sex: String) {
+        self.credentialId = credentialId
         self.firstName = firstName
         self.lastName = lastName
         self.height = height
         self.sex = sex
+    }
+}
+
+internal struct Credentials: Codable {
+    var id = UUID()
+    var username: String
+    var password: String
+    
+    init(username: String, password: String) {
+        self.username = username
+        self.password = password
     }
 }

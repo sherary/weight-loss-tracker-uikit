@@ -34,7 +34,7 @@ final class SettingsService {
     }
     
     internal static func getSetting(for settingId: String) -> SettingItems? {
-        let settings: [SettingItems] = Settings.items
+        let settings: [SettingItems] = Settings.generalItems
         
         return settings.first(where: { $0.id == settingId })
     }
@@ -45,9 +45,24 @@ final class SettingsService {
                 sectionId: 1,
                 title: "Preferences",
                 items: [
-                    SettingItems(id: SettingKey.goalWeight.name, name: SettingKey.goalWeight.title, value: Settings.goalWeight, destination: .goalWeight),
-                    SettingItems(id: SettingKey.activityLevel.name, name: SettingKey.activityLevel.title, value: Settings.activityLevel, destination: .activityLevel),
-                    SettingItems(id: SettingKey.measurement.name, name: SettingKey.measurement.title, value: Settings.measurementUnit, destination: .measurement)
+                    SettingItems(
+                        id: SettingKey.goalWeight.name,
+                        name: SettingKey.goalWeight.title,
+                        value: .double(Settings.goalWeight),
+                        destination: .goalWeight
+                    ),
+                    SettingItems(
+                        id: SettingKey.activityLevel.name,
+                        name: SettingKey.activityLevel.title,
+                        value: .int(Settings.activityLevel),
+                        destination: .activityLevel
+                    ),
+                    SettingItems(
+                        id: SettingKey.measurement.name,
+                        name: SettingKey.measurement.title,
+                        value: .int(Settings.measurementUnit),
+                        destination: .measurement
+                    )
                 ],
                 description: "Set your preferences on weight goals, activity level and measurement units"
             ),
@@ -55,8 +70,18 @@ final class SettingsService {
                 sectionId: 2,
                 title: "Dates",
                 items: [
-                    SettingItems(id: SettingKey.dayStart.name, name: SettingKey.dayStart.title, value: Settings.dayStart, destination: .dayStart),
-                    SettingItems(id: SettingKey.monthStart.name, name: SettingKey.monthStart.title, value: Settings.monthStart, destination: .monthStart),
+                    SettingItems(
+                        id: SettingKey.dayStart.name,
+                        name: SettingKey.dayStart.title,
+                        value: .int(Settings.dayStart),
+                        destination: .dayStart
+                    ),
+                    SettingItems(
+                        id: SettingKey.monthStart.name,
+                        name: SettingKey.monthStart.title,
+                        value: .int(Settings.monthStart),
+                        destination: .monthStart
+                    ),
                 ],
                 description: "Set your starting day of the week and preferable starting date each month"
             ),
@@ -65,8 +90,18 @@ final class SettingsService {
                 sectionId: 3,
                 title: "Connections",
                 items: [
-                    SettingItems(id: SettingKey.appleWatchConnect.name, name: SettingKey.appleWatchConnect.title, value: Settings.appleWatchConnect, destination: .appleWatchConnect),
-                    SettingItems(id: SettingKey.miBandConnect.name, name: SettingKey.miBandConnect.title, value: Settings.miBandConnect, destination: .miBandConnect),
+                    SettingItems(
+                        id: SettingKey.appleWatchConnect.name,
+                        name: SettingKey.appleWatchConnect.title,
+                        value: .bool(Settings.appleWatchConnect),
+                        destination: .appleWatchConnect
+                    ),
+                    SettingItems(
+                        id: SettingKey.miBandConnect.name,
+                        name: SettingKey.miBandConnect.title,
+                        value: .bool(Settings.miBandConnect),
+                        destination: .miBandConnect
+                    ),
                 ],
                 description: "Connect your available devices"
             ),

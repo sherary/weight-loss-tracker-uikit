@@ -36,7 +36,7 @@ final class MiBandConnectSettingsViewController: UIViewController {
     @objc private func saveSetting() {
         let isOn = miBandConnectSettingsView.switchView.isOn
         
-        Settings.miBandConnect = isOn ? 1 : 0
+        Settings.miBandConnect = isOn
         navigationController?.popViewController(animated: true)
     }
 }
