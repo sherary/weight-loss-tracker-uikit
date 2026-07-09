@@ -54,32 +54,135 @@ internal enum Settings: CaseIterable {
     internal static var goalWeight: Double
     
     @Setting(key: SettingKey.activityLevel.name, defaultValue: 0)
-    internal static var activityLevel: Double
+    internal static var activityLevel: Int
     
     @Setting(key: SettingKey.measurement.name, defaultValue: 0)
-    internal static var measurementUnit: Double
+    internal static var measurementUnit: Int
     
     @Setting(key: SettingKey.dayStart.name, defaultValue: 0)
-    internal static var dayStart: Double
+    internal static var dayStart: Int
     
     @Setting(key: SettingKey.monthStart.name, defaultValue: 1)
-    internal static var monthStart: Double
+    internal static var monthStart: Int
     
-    @Setting(key: SettingKey.appleWatchConnect.name, defaultValue: 0)
-    internal static var appleWatchConnect: Double
+    @Setting(key: SettingKey.appleWatchConnect.name, defaultValue: false)
+    internal static var appleWatchConnect: Bool
     
-    @Setting(key: SettingKey.miBandConnect.name, defaultValue: 0)
-    internal static var miBandConnect: Double
+    @Setting(key: SettingKey.miBandConnect.name, defaultValue: false)
+    internal static var miBandConnect: Bool
     
-    internal static var items: [SettingItems] {
+    @Setting(key: SettingKey.firstName.name, defaultValue: "Jane")
+    internal static var firstName: String
+    
+    @Setting(key: SettingKey.lastName.name, defaultValue: "Doe")
+    internal static var lastName: String
+    
+    @Setting(key: SettingKey.sex.name, defaultValue: 0)
+    internal static var sex: Int
+    
+    @Setting(key: SettingKey.age.name, defaultValue: 20)
+    internal static var age: Int
+    
+    @Setting(key: SettingKey.height.name, defaultValue: 160)
+    internal static var height: Int
+    
+    @Setting(key: SettingKey.weight.name, defaultValue: 60)
+    internal static var weight: Double
+    
+    @Setting(key: SettingKey.username.name, defaultValue: Settings.firstName.lowercased() + Settings.lastName.lowercased())
+    internal static var username: String
+    
+    internal static var profileItems: [SettingItems] {
         return [
-            SettingItems(id: SettingKey.goalWeight.name, name: SettingKey.goalWeight.title, value: Settings.goalWeight, destination: .goalWeight),
-            SettingItems(id: SettingKey.activityLevel.name, name: SettingKey.activityLevel.title, value: Settings.activityLevel, destination: .activityLevel),
-            SettingItems(id: SettingKey.measurement.name, name: SettingKey.measurement.title, value: Settings.measurementUnit, destination: .measurement),
-            SettingItems(id: SettingKey.dayStart.name, name: SettingKey.dayStart.title, value: Settings.dayStart, destination: .dayStart),
-            SettingItems(id: SettingKey.monthStart.name, name: SettingKey.monthStart.title, value: Settings.monthStart, destination: .monthStart),
-            SettingItems(id: SettingKey.appleWatchConnect.name, name: SettingKey.appleWatchConnect.title, value: Settings.appleWatchConnect, destination: .appleWatchConnect),
-            SettingItems(id: SettingKey.miBandConnect.name, name: SettingKey.miBandConnect.title, value: Settings.miBandConnect, destination: .miBandConnect)
+            SettingItems(
+                id: SettingKey.firstName.name,
+                name: SettingKey.firstName.title,
+                value: .string(Settings.firstName),
+                destination: .firstName
+            ),
+            SettingItems(
+                id: SettingKey.lastName.name,
+                name: SettingKey.lastName.title,
+                value: .string(Settings.lastName),
+                destination: .lastName
+            ),
+            SettingItems(
+                id: SettingKey.sex.name,
+                name: SettingKey.sex.title,
+                value: .int(Settings.sex),
+                destination: .sex
+            ),
+            SettingItems(
+                id: SettingKey.age.name,
+                name: SettingKey.age.title,
+                value: .int(Settings.age),
+                destination: .age
+            ),
+            SettingItems(
+                id: SettingKey.height.name,
+                name: SettingKey.height.title,
+                value: .int(Settings.height),
+                destination: .height
+            ),
+            SettingItems(
+                id: SettingKey.weight.name,
+                name: SettingKey.weight.title,
+                value: .double(Settings.weight),
+                destination: .weight
+            ),
+            SettingItems(
+                id: SettingKey.username.name,
+                name: SettingKey.username.title,
+                value: .string(Settings.username),
+                destination: .username
+            ),
+        ]
+    }
+    
+    internal static var generalItems: [SettingItems] {
+        return [
+            SettingItems(
+                id: SettingKey.goalWeight.name,
+                name: SettingKey.goalWeight.title,
+                value: .double(Settings.goalWeight),
+                destination: .goalWeight
+            ),
+            SettingItems(
+                id: SettingKey.activityLevel.name,
+                name: SettingKey.activityLevel.title,
+                value: .int(Settings.activityLevel),
+                destination: .activityLevel
+            ),
+            SettingItems(
+                id: SettingKey.measurement.name,
+                name: SettingKey.measurement.title,
+                value: .int(Settings.measurementUnit),
+                destination: .measurement
+            ),
+            SettingItems(
+                id: SettingKey.dayStart.name,
+                name: SettingKey.dayStart.title,
+                value: .int(Settings.dayStart),
+                destination: .dayStart
+            ),
+            SettingItems(
+                id: SettingKey.monthStart.name,
+                name: SettingKey.monthStart.title,
+                value: .int(Settings.monthStart),
+                destination: .monthStart
+            ),
+            SettingItems(
+                id: SettingKey.appleWatchConnect.name,
+                name: SettingKey.appleWatchConnect.title,
+                value: .bool(Settings.appleWatchConnect),
+                destination: .appleWatchConnect
+            ),
+            SettingItems(
+                id: SettingKey.miBandConnect.name,
+                name: SettingKey.miBandConnect.title,
+                value: .bool(Settings.miBandConnect),
+                destination: .miBandConnect
+            )
         ]
     }
 }
@@ -113,4 +216,9 @@ internal struct Multiply {
 
 internal struct Empty {
     static let String: String = ""
+}
+
+internal enum Context {
+    case settings
+    case editProfile
 }
