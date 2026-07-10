@@ -1,12 +1,29 @@
 import CoreFoundation
 import UIKit
 
-internal enum Sex: String, CustomStringConvertible {
-    case male = "M"
-    case female = "F"
+internal enum Sex: String, CaseIterable {
+    case male
+    case female
+    case others
+    
+    var index: Int {
+        return Sex.allCases.firstIndex(of: self) ?? 0
+    }
     
     var description: String {
-        return self.rawValue
+        let data = self.rawValue
+        return "\(data.prefix(1).uppercased())\(data.suffix(data.count - 1))"
+    }
+    
+    var image: String {
+        switch self {
+        case .male:
+            return "figure.stand"
+        case .female:
+            return "figure.stand.dress"
+        case .others:
+            return "figure.stand.dress.line.vertical"
+        }
     }
 }
 
@@ -84,7 +101,7 @@ internal enum Settings: CaseIterable {
     internal static var age: Int
     
     @Setting(key: SettingKey.height.name, defaultValue: 160)
-    internal static var height: Int
+    internal static var height: Double
     
     @Setting(key: SettingKey.weight.name, defaultValue: 60)
     internal static var weight: Double
@@ -121,7 +138,7 @@ internal enum Settings: CaseIterable {
             SettingItems(
                 id: SettingKey.height.name,
                 name: SettingKey.height.title,
-                value: .int(Settings.height),
+                value: .double(Settings.height),
                 destination: .height
             ),
             SettingItems(
