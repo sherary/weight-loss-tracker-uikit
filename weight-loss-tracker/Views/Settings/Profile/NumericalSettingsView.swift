@@ -1,26 +1,48 @@
 import UIKit
 
-final class NameSettingsView: UIView {
-    internal lazy var textField = UITextField()
-    internal lazy var saveBtn = UIButton()
+final class NumericalSettingsView: UIView {
+    private var textField = UITextField()
     
-    internal var setting: SettingItems? {
+    internal var saveBtn = UIButton()
+    internal private(set) var selectedValue: String?
+    internal var value: SettingValue? {
         didSet {
-            guard let setting = setting else { return }
+            guard let value = value else {
+                return
+            }
             
-            textField.text = setting.value.stringValue
+            if let intValue = value.intValue {
+                textField.text = "\(intValue)"
+            }
+            
+            if let doubleValue = value.doubleValue {
+                textField.text = "\(doubleValue)"
+            }
+            
+            textField.sendActions(for: .editingChanged)
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setupLayout()
-        setConstraints()
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        
+        commonInit()
+    }
+    
+    private func commonInit() {
+        textField.addAction(UIAction { [weak self] action in
+            guard let sender = action.sender as? UITextField,
+                  let self = self
+            else { return }
+            
+            selectedValue = sender.text
+        }, for: .editingChanged)
         
         setupLayout()
         setConstraints()
@@ -29,8 +51,7 @@ final class NameSettingsView: UIView {
     private func setupLayout() {
         self.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
         
-        textField.keyboardType = .alphabet
-        textField.returnKeyType = .done
+        textField.keyboardType = .decimalPad
         textField.clearButtonMode = .whileEditing
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
