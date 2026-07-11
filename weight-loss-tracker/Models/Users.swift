@@ -26,17 +26,18 @@ internal struct Users: Codable {
     var credentialId: UUID
     var firstName: String
     var lastName: String
-    var height: Double
-    var sex: String
+    var height: Double?
+    var gender: Int?
     var avatar: String?
     var bio: Bio?
     
-    init(credentialId: UUID = UUID(), firstName: String, lastName: String, height: Double, sex: String) {
+    init(credentialId: UUID = UUID(), firstName: String, lastName: String, height: Double? = 0, gender: Int? = 0, avatar: String? = Empty.String) {
         self.credentialId = credentialId
         self.firstName = firstName
         self.lastName = lastName
         self.height = height
-        self.sex = sex
+        self.gender = gender
+        self.avatar = avatar
     }
 }
 

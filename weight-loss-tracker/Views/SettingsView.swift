@@ -1,13 +1,25 @@
 import UIKit
 
 final class SettingsView: UIView {
-    internal var userAvatar = UserAvatarView()
+    internal var userAvatar = UserAvatarView(context: .settings)
     internal var tableView = UITableView(frame: .zero, style: .insetGrouped)
+    internal lazy var hStack = UIStackView(arrangedSubviews: [userAvatar, tableView])
+    
     internal var userAvatarOnTapToVC: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.commonInit()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        
+        self.commonInit()
+    }
+    
+    private func commonInit() {
         setupLayout()
         
         userAvatar.onTap = { [weak self] in
@@ -15,29 +27,29 @@ final class SettingsView: UIView {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-    
     private func setupLayout() {
         self.backgroundColor = .secondarySystemBackground
         self.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 24, leading: 16, bottom: 24, trailing: 16)
         
         userAvatar.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        userAvatar.context = .settings
+        userAvatar.translatesAutoresizingMaskIntoConstraints = false
+        userAvatar.setContentHuggingPriority(.required, for: .vertical)
+        userAvatar.setContentCompressionResistancePriority(.required, for: .vertical)
         
-        addSubview(userAvatar)
-        addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        hStack.axis = .vertical
+        hStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(hStack)
         
         NSLayoutConstraint.activate([
-            userAvatar.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            userAvatar.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            userAvatar.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            
-            tableView.topAnchor.constraint(equalTo: userAvatar.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+            hStack.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+            hStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            hStack.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            hStack.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
         ])
     }
 }

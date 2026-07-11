@@ -35,7 +35,13 @@ final class SettingsViewController: UIViewController {
     
     private func refreshUnitSetting() {
         settingSections = SettingsService.getAvailableSettings()
+        let user = Users(
+            firstName: Settings.firstName,
+            lastName: Settings.lastName,
+            avatar: Settings.avatar
+        )
         
+        settingsView.userAvatar.user = user
         settingsView.tableView.reloadData()
     }
 }
