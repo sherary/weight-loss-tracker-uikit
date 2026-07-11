@@ -118,17 +118,22 @@ final class Helpers {
         return calendar.dateComponents(components, from: date)
     }
     
-    internal static func getLastDateOfMonth(for date: Date) -> Int {
-        guard let dayRange = calendar.range(of: .day, in: .month, for: date) else { return 0 }
-        return dayRange.count
-    }
-    
     internal static func getTotalWeeksInMonth(from date: Date) -> Int {
         if let weekRange = calendar.range(of: .weekOfMonth, in: .month, for: date) {
             return weekRange.count
         }
         
         return 0
+    }
+    
+    internal static func composeDate(year: Int, month: Int, date: Int) -> Date {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = date
+        components.timeZone = TimeZone.current
+        
+        return Calendar.current.date(from: components)!
     }
     
     internal static func removeExcessiveCommas(text: String) -> String {
@@ -143,6 +148,31 @@ final class Helpers {
             } else {
                 result.append(char)
             }
+        }
+        
+        return result
+    }
+    
+    internal static func toTitleString(text: String) -> String {
+        var result = ""
+        var symbolMarked = false
+        
+        for (index, string) in text.enumerated() {
+            if index == 0 || symbolMarked {
+                result.append(string.uppercased())
+                symbolMarked = false
+                
+                continue
+            }
+            
+            if string == "_" {
+                result.append(" ")
+                symbolMarked = true
+                
+                continue
+            }
+            
+            result.append(string)
         }
         
         return result

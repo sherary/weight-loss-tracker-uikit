@@ -8,8 +8,10 @@
 import Foundation
 
 final class SettingsService {
-    static let shared = SettingsService()
+    internal static let shared = SettingsService()
+    
     private(set) var activityLevels: [String] = []
+    private(set) var dayNames: [String] = DayNames
     
     private init() {
         load()
@@ -31,23 +33,80 @@ final class SettingsService {
         return SettingsService.shared.activityLevels[level]
     }
     
-    internal static func getSettingSection(for sectionId: Int, and settingId: Int) -> SettingSection? {
-        guard let data = UserDefaults.standard.data(forKey: Configs.SETTINGS_KEY),
-              let decodedData = try? JSONDecoder().decode([SettingSection].self, from: data),
-              var settingSection = decodedData.first(where: { $0.id == sectionId })
-        else { return nil }
+    internal static func getSetting(for settingId: String) -> SettingItems? {
+        let settings: [SettingItems] = Settings.generalItems
         
-        settingSection.items = settingSection.items.filter({ $0.id == settingId })
-        
-        return settingSection
+        return settings.first(where: { $0.id == settingId })
     }
     
     internal static func getAvailableSettings() -> [SettingSection] {
-        guard let data = UserDefaults.standard.data(forKey: Configs.SETTINGS_KEY) else { return [] }
-        guard let decodedData = try? JSONDecoder().decode([SettingSection].self, from: data) else { return [] }
+        let settings: [SettingSection] = [
+            SettingSection(
+                sectionId: 1,
+                title: "Preferences",
+                items: [
+                    SettingItems(
+                        id: SettingKey.goalWeight.name,
+                        name: SettingKey.goalWeight.title,
+                        value: .double(Settings.goalWeight),
+                        destination: .goalWeight
+                    ),
+                    SettingItems(
+                        id: SettingKey.activityLevel.name,
+                        name: SettingKey.activityLevel.title,
+                        value: .int(Settings.activityLevel),
+                        destination: .activityLevel
+                    ),
+                    SettingItems(
+                        id: SettingKey.measurement.name,
+                        name: SettingKey.measurement.title,
+                        value: .int(Settings.measurementUnit),
+                        destination: .measurement
+                    )
+                ],
+                description: "Set your preferences on weight goals, activity level and measurement units"
+            ),
+            SettingSection(
+                sectionId: 2,
+                title: "Dates",
+                items: [
+                    SettingItems(
+                        id: SettingKey.dayStart.name,
+                        name: SettingKey.dayStart.title,
+                        value: .int(Settings.dayStart),
+                        destination: .dayStart
+                    ),
+                    SettingItems(
+                        id: SettingKey.monthStart.name,
+                        name: SettingKey.monthStart.title,
+                        value: .int(Settings.monthStart),
+                        destination: .monthStart
+                    ),
+                ],
+                description: "Set your starting day of the week and preferable starting date each month"
+            ),
+            
+            SettingSection(
+                sectionId: 3,
+                title: "Connections",
+                items: [
+                    SettingItems(
+                        id: SettingKey.appleWatchConnect.name,
+                        name: SettingKey.appleWatchConnect.title,
+                        value: .bool(Settings.appleWatchConnect),
+                        destination: .appleWatchConnect
+                    ),
+                    SettingItems(
+                        id: SettingKey.miBandConnect.name,
+                        name: SettingKey.miBandConnect.title,
+                        value: .bool(Settings.miBandConnect),
+                        destination: .miBandConnect
+                    ),
+                ],
+                description: "Connect your available devices"
+            ),
+        ]
         
-        return decodedData
+        return settings
     }
-    
-    
 }

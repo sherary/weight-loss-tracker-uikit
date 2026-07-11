@@ -23,75 +23,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        CollectionTypeUserDefaultMethods.purgeUserDefaults(key: Configs.USER_DEFAULTS_KEY)
         
         // add default settings on every install
-        let defaultSettings: [SettingSection] = [
-            SettingSection(
-                sectionId: 1,
-                title: "Goals",
-                items: [
-                    SettingItems(id: 1, name: "Goal Weight", value: 50, destination: .goalWeight),
-                    SettingItems(id: 2, name: "Activity Level", value: 2, destination: .activityLevel)
-                ]
-            ),
-            SettingSection(
-                sectionId: 2,
-                title: "Utilities",
-                items: [
-                    SettingItems(id: 3, name: "Unit of Measurement", value: 1, destination: .measurement)
-                ]
-            ),
-            SettingSection(
-                sectionId: 3,
-                title: "Dates",
-                items: [
-                    SettingItems(id: 4, name: "Weekly Range", value: 0, destination: .dayRange),
-                    SettingItems(id: 5, name: "Monthly Range", value: 1, destination: .monthlyRange)
-                ],
-                description: "Set the start of your preferred dates"
-            ),
-            SettingSection(
-                sectionId: 4,
-                title: "Connected Devices",
-                items: [
-                    SettingItems(id: 6, name: "Apple Watch", value: 0, destination: .appleWatchConnect),
-                    SettingItems(id: 7, name: "Mi Band", value: 0, destination: .miBandConnect)
-                ],
-                description: "Connect your favorite device to measure your metrics accurately"
-            )
-        ]
+        Settings.activityLevel = DefaultSettings.activityLevel
+        Settings.goalWeight = DefaultSettings.goalWeight
+        Settings.measurementUnit = DefaultSettings.measurementUnit
+        Settings.dayStart = DefaultSettings.dayStart
+        Settings.monthStart = DefaultSettings.monthStart
+        Settings.appleWatchConnect = DefaultSettings.appleWatchConnect
+        Settings.miBandConnect = DefaultSettings.miBandConnect
         
-        guard let data = try? JSONEncoder().encode(defaultSettings) else { return }
-        UserDefaults.standard.set(data, forKey: Configs.SETTINGS_KEY)
+        Settings.firstName = DefaultSettings.firstName
+        Settings.lastName = DefaultSettings.lastName
+        Settings.gender = DefaultSettings.gender
+        Settings.weight = DefaultSettings.weight
+        Settings.height = DefaultSettings.height
+        Settings.age = DefaultSettings.age
+        Settings.username = DefaultSettings.username
         #endif
         
-        let rootVC = EntryViewController()
-        let entryRootNav = UINavigationController(rootViewController: rootVC)
-        entryRootNav.tabBarItem = UITabBarItem(
-            title: "Home",
-            image: UIImage(systemName: "house"),
-            selectedImage: UIImage(systemName: "house.fill")
-        )
-        
-        let historyVC = HistoryViewController()
-        let historyNav = UINavigationController(rootViewController: historyVC)
-        historyNav.tabBarItem = UITabBarItem(
-            title: "History",
-            image: UIImage(systemName: "clock"),
-            selectedImage: UIImage(systemName: "clock.fill")
-        )
-        
-        let settingsVC = SettingsViewController()
-        let settingsNav = UINavigationController(rootViewController: settingsVC)
-        settingsNav.tabBarItem = UITabBarItem(
-            title: "Settings",
-            image: UIImage(systemName: "gear"),
-            selectedImage: UIImage(systemName: "gearshape")
-        )
-        
-        let tabBar = UITabBarController()
-        tabBar.viewControllers = [historyNav, entryRootNav, settingsNav]
-        tabBar.selectedIndex = 1
-        
+        let tabBar = TabBarViewModel.makeTabBar()
         window.rootViewController = tabBar
+        
         self.window = window
         window.makeKeyAndVisible()
     }

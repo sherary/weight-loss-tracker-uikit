@@ -115,6 +115,18 @@ extension Double {
     }
 }
 
+//extension String {
+//    internal func toBase64Encoding() -> String? {
+//        return data(using: .utf8)?.base64EncodedString()
+//    }
+//    
+//    internal func toBase64Decoding() -> String? {
+//        guard let data = Data(base64Encoded: self) else { return nil }
+//        
+//        return String(data: data, encoding: .utf8)
+//    }
+//}
+
 extension Date {
     static let localFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -141,4 +153,9 @@ extension DateComponents {
         
         return component
     }()
+}
+
+extension Notification.Name {
+    internal static let settingsDidChange = Notification.Name("settingDidChange")
+    internal static let weightStoreDidChange = Notification.Name("weightStoreDidChange")
 }
