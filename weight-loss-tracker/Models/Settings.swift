@@ -30,7 +30,7 @@ internal enum SettingKey: String, CaseIterable, Codable {
     
     case firstName = "first_name"
     case lastName = "last_name"
-    case sex = "sex"
+    case gender = "gender"
     case age = "age"
     case height = "height"
     case weight = "weight"

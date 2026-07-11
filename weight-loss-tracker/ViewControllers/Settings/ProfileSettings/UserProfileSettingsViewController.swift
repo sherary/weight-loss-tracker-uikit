@@ -26,11 +26,18 @@ final class UserProfileSettingsViewController: UIViewController, UISheetPresenta
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         refreshDataTable()
     }
     
     private func refreshDataTable() {
+        let user = Users(
+            firstName: Settings.firstName,
+            lastName: Settings.lastName,
+            avatar: Settings.avatar
+        )
+        
+        userProfileView.userAvatar.user = user
         userProfileView.userInfoTable.reloadData()
     }
     
@@ -79,7 +86,7 @@ final class UserProfileSettingsViewController: UIViewController, UISheetPresenta
             }
             
             vc = numericalVC
-        case .sex:
+        case .gender:
             let categoricalVC = CategoricalSettingsViewController()
             categoricalVC.options = UserService.genderInfo
             categoricalVC.settingId = setting.id
@@ -92,6 +99,21 @@ final class UserProfileSettingsViewController: UIViewController, UISheetPresenta
             }
             
             vc = categoricalVC
+        case .avatar:
+            let avatarVC = AvatarUploadSettingsViewController()
+            avatarVC.onDismiss = { [weak self] base64 in
+                guard let self = self else { return }
+                if let data = base64,
+                   !data.isEmpty {
+                    viewModel.save(data)
+                } else {
+                    viewModel.resetToDefault(for: .avatar)
+                }
+                
+                self.refreshDataTable()
+            }
+            
+            vc = avatarVC
         default:
             return
         }
@@ -108,7 +130,8 @@ final class UserProfileSettingsViewController: UIViewController, UISheetPresenta
     }
     
     @objc private func editAvatarOnTap() {
-        print("avatar tapped")
+        guard let setting = viewModel.getSetting(for: SettingKey.avatar.name) else { return }
+        presentSheet(for: setting)
     }
 }
 

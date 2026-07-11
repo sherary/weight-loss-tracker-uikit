@@ -113,7 +113,7 @@ internal struct SettingsViewModel {
             firstName: Settings.firstName,
             lastName: Settings.lastName,
             height: Double(Settings.height),
-            sex: Settings.sex == 0 ? "Female" : "Male"
+            gender: Settings.gender
         )
     }
 }

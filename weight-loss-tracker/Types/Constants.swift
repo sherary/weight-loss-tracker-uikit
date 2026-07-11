@@ -66,48 +66,70 @@ internal enum MeasurementUnits: String, CaseIterable {
     }
 }
 
+internal enum DefaultSettings {
+    static let goalWeight: Double = 50
+    static let activityLevel = 0
+    static let measurementUnit = 0
+    static let dayStart = 0
+    static let monthStart = 0
+    static let appleWatchConnect = false
+    static let miBandConnect = false
+    
+    static let firstName = "Jane"
+    static let lastName = "Doe"
+    static let gender = 0
+    static let age = 20
+    static let weight: Double = 60
+    static let height: Double = 160
+    static let username = "jane_doe"
+    static let avatar = Empty.String
+}
+
 internal enum Settings: CaseIterable {
-    @Setting(key: SettingKey.goalWeight.name, defaultValue: 50)
+    @Setting(key: SettingKey.goalWeight.name, defaultValue: DefaultSettings.goalWeight)
     internal static var goalWeight: Double
     
-    @Setting(key: SettingKey.activityLevel.name, defaultValue: 0)
+    @Setting(key: SettingKey.activityLevel.name, defaultValue: DefaultSettings.activityLevel)
     internal static var activityLevel: Int
     
-    @Setting(key: SettingKey.measurement.name, defaultValue: 0)
+    @Setting(key: SettingKey.measurement.name, defaultValue: DefaultSettings.measurementUnit)
     internal static var measurementUnit: Int
     
-    @Setting(key: SettingKey.dayStart.name, defaultValue: 0)
+    @Setting(key: SettingKey.dayStart.name, defaultValue: DefaultSettings.dayStart)
     internal static var dayStart: Int
     
-    @Setting(key: SettingKey.monthStart.name, defaultValue: 1)
+    @Setting(key: SettingKey.monthStart.name, defaultValue: DefaultSettings.monthStart)
     internal static var monthStart: Int
     
-    @Setting(key: SettingKey.appleWatchConnect.name, defaultValue: false)
+    @Setting(key: SettingKey.appleWatchConnect.name, defaultValue: DefaultSettings.appleWatchConnect)
     internal static var appleWatchConnect: Bool
     
-    @Setting(key: SettingKey.miBandConnect.name, defaultValue: false)
+    @Setting(key: SettingKey.miBandConnect.name, defaultValue: DefaultSettings.miBandConnect)
     internal static var miBandConnect: Bool
     
-    @Setting(key: SettingKey.firstName.name, defaultValue: "Jane")
+    @Setting(key: SettingKey.firstName.name, defaultValue: DefaultSettings.firstName)
     internal static var firstName: String
     
-    @Setting(key: SettingKey.lastName.name, defaultValue: "Doe")
+    @Setting(key: SettingKey.lastName.name, defaultValue: DefaultSettings.lastName)
     internal static var lastName: String
     
-    @Setting(key: SettingKey.sex.name, defaultValue: 0)
-    internal static var sex: Int
+    @Setting(key: SettingKey.gender.name, defaultValue: DefaultSettings.gender)
+    internal static var gender: Int
     
-    @Setting(key: SettingKey.age.name, defaultValue: 20)
+    @Setting(key: SettingKey.age.name, defaultValue: DefaultSettings.age)
     internal static var age: Int
     
-    @Setting(key: SettingKey.height.name, defaultValue: 160)
+    @Setting(key: SettingKey.height.name, defaultValue: DefaultSettings.height)
     internal static var height: Double
     
-    @Setting(key: SettingKey.weight.name, defaultValue: 60)
+    @Setting(key: SettingKey.weight.name, defaultValue: DefaultSettings.weight)
     internal static var weight: Double
     
-    @Setting(key: SettingKey.username.name, defaultValue: Settings.firstName.lowercased() + Settings.lastName.lowercased())
+    @Setting(key: SettingKey.username.name, defaultValue: DefaultSettings.username)
     internal static var username: String
+    
+    @Setting(key: SettingKey.avatar.name, defaultValue: DefaultSettings.avatar)
+    internal static var avatar: String
     
     internal static var profileItems: [SettingItems] {
         return [
@@ -124,10 +146,10 @@ internal enum Settings: CaseIterable {
                 destination: .lastName
             ),
             SettingItems(
-                id: SettingKey.sex.name,
-                name: SettingKey.sex.title,
-                value: .int(Settings.sex),
-                destination: .sex
+                id: SettingKey.gender.name,
+                name: SettingKey.gender.title,
+                value: .int(Settings.gender),
+                destination: .gender
             ),
             SettingItems(
                 id: SettingKey.age.name,
@@ -152,6 +174,12 @@ internal enum Settings: CaseIterable {
                 name: SettingKey.username.title,
                 value: .string(Settings.username),
                 destination: .username
+            ),
+            SettingItems(
+                id: SettingKey.avatar.name,
+                name: SettingKey.avatar.title,
+                value: .string(Settings.avatar),
+                destination: .avatar
             ),
         ]
     }

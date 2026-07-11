@@ -51,7 +51,11 @@ final class UserAvatarView: UIView {
         
         updateImageSize()
         
-        imageView.layer.cornerRadius = imageView.frame.width / 2
+        hStack.layoutIfNeeded()
+        imageView.layoutIfNeeded()
+
+        imageView.layer.cornerRadius = min(imageView.bounds.width, imageView.bounds.height) / 2
+        imageView.layer.cornerCurve = .continuous
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -100,10 +104,6 @@ final class UserAvatarView: UIView {
         
         imgWidth.constant = newSize
         imgHeight.constant = newSize
-        
-        UIView.animate(withDuration: 0.3) {
-            self.layoutIfNeeded()
-        }
     }
     
     private func handleContext() {
@@ -173,6 +173,7 @@ final class UserAvatarView: UIView {
     private func setupLayout() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         
         label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .label
@@ -207,10 +208,13 @@ final class UserAvatarView: UIView {
         label.text = "User"
         
         if let user = user {
-            label.text = "\(user.firstName) \( user.lastName)"
+            label.text = "\(user.firstName) \(user.lastName)"
             
-            guard let avatar = user.avatar, let parsedData = Data(base64Encoded: avatar) else { return }
-            img = UIImage(data: parsedData)
+            if let avatar = user.avatar,
+               avatar != Empty.String,
+               let parsedData = Data(base64Encoded: avatar) {
+                img = UIImage(data: parsedData)
+            }
         }
         
         imageView.image = img

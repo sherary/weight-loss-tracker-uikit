@@ -13,7 +13,7 @@ final class UserProfileViewModel {
         guard let setting = setting else { return [] }
         
         switch setting.destination {
-        case .sex:
+        case .gender:
             return UserService.genderInfo
         default:
             return []
@@ -26,8 +26,8 @@ final class UserProfileViewModel {
         switch setting.destination {
         case .age:
             Settings.age = Int(value)
-        case .sex:
-            Settings.sex = Int(value)
+        case .gender:
+            Settings.gender = Int(value)
         default:
             break
         }
@@ -56,9 +56,36 @@ final class UserProfileViewModel {
             Settings.lastName = value
         case .username:
             Settings.username = value
+        case .avatar:
+            Settings.avatar = value
         default:
             break
         }
+    }
+    
+    internal func resetToDefault(for key: SettingKey) {
+        switch key {
+        case .firstName:
+            Settings.firstName = DefaultSettings.firstName
+        case .lastName:
+            Settings.lastName = DefaultSettings.lastName
+        case .username:
+            Settings.username = DefaultSettings.username
+        case .weight:
+            Settings.weight = DefaultSettings.weight
+        case .height:
+            Settings.height = DefaultSettings.height
+        case .age:
+            Settings.age = DefaultSettings.age
+        case .avatar:
+            Settings.avatar = Empty.String
+        default:
+            break;
+        }
+    }
+    
+    internal func getSetting(for key: String) -> SettingItems? {
+        return UserService.getSetting(for: key)
     }
     
     internal func valueHandler(for value: SettingValue, index: Int) -> String {

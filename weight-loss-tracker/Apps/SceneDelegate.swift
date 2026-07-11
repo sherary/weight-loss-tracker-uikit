@@ -23,21 +23,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        CollectionTypeUserDefaultMethods.purgeUserDefaults(key: Configs.USER_DEFAULTS_KEY)
         
         // add default settings on every install
-        Settings.activityLevel = 0
-        Settings.goalWeight = 48
-        Settings.measurementUnit = 0
-        Settings.dayStart = 0
-        Settings.monthStart = 1
-        Settings.appleWatchConnect = false
-        Settings.miBandConnect = false
+        Settings.activityLevel = DefaultSettings.activityLevel
+        Settings.goalWeight = DefaultSettings.goalWeight
+        Settings.measurementUnit = DefaultSettings.measurementUnit
+        Settings.dayStart = DefaultSettings.dayStart
+        Settings.monthStart = DefaultSettings.monthStart
+        Settings.appleWatchConnect = DefaultSettings.appleWatchConnect
+        Settings.miBandConnect = DefaultSettings.miBandConnect
         
-        Settings.firstName = "Moe"
-        Settings.lastName = "Power"
-        Settings.sex = 0
-        Settings.weight = 55
-        Settings.height = 155
-        Settings.age = 20
-        Settings.username = "moepower"
+        Settings.firstName = DefaultSettings.firstName
+        Settings.lastName = DefaultSettings.lastName
+        Settings.gender = DefaultSettings.gender
+        Settings.weight = DefaultSettings.weight
+        Settings.height = DefaultSettings.height
+        Settings.age = DefaultSettings.age
+        Settings.username = DefaultSettings.username
         #endif
         
         let tabBar = TabBarViewModel.makeTabBar()
